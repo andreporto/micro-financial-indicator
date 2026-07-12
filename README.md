@@ -20,6 +20,34 @@ A aplicação utiliza um design de informações limpo e profissional, estrutura
 
 ---
 
+## 🧠 Como a Inteligência Artificial (SCM Engine) é Utilizada
+
+O projeto adota uma abordagem de **IA Baseada em Confluência Quantitativa (Sistemas Especialistas de Heurística Determinística)** para calcular o viés macro. Em vez de redes neurais genéricas ou LLMs (que geram "alucinações financeiras" em números), o motor SCM (Score de Confluência Multidimensional) simula o comportamento lógico de um analista quantitativo automatizado, garantindo 100% de precisão matemática e reprodutibilidade de dados.
+
+### 🔌 Como a IA é chamada no Código
+A inteligência preditiva é ativada no fluxo de atualização do Dashboard no arquivo [app.js](file:///home/coderbr/coderbr-lab/saas-financial-indicator/app.js) ao invocar a função `runPredictionEngine` exportada por [src/indicators.js](file:///home/coderbr/coderbr-lab/saas-financial-indicator/src/indicators.js) a cada recarga de gráfico:
+
+```javascript
+const prediction = runPredictionEngine(
+  currentPrice,
+  { closes, ema9, ema21, ema52, sma100, sma200, rsi: stochRsi.rsi, stochK: stochRsi.k },
+  fvgs,
+  srLevels,
+  onchain
+);
+```
+
+### ⚙️ Lógica de Análise e Matriz de Decisão
+O motor pondera os dados coletados estruturando a tese em 4 pilares:
+1.  **Tendência Macro (40%)**: Avalia se o preço está acima da EMA 21 Semanal (tendência primária) e se há alinhamento de alta (EMA 9 > 21 > 52).
+2.  **Momentum & Exaustão (20%)**: Verifica divergências no Stochastic RSI e se o RSI diário/semanal está em zonas de sobrecompra/sobrevenda extremas.
+3.  **Price Action & Liquidez (20%)**: Detecta se o preço está em zonas de rebalanceamento (Fair Value Gaps) e a distância até suportes/resistências consolidados.
+4.  **Saúde On-Chain (20%)**: Compara o preço spot com os preços realizados históricos (STH-RP e LTH-RP) e avalia o desvio padrão do MVRV Z-Score.
+
+O resultado consolidado varia de **-100 a +100**, definindo o viés de mercado (Bullish/Bearish/Neutro) e desenhando automaticamente as zonas de entrada (Buy Zone), metas técnicas (Targets) baseadas em resistências e níveis de invalidação macro (Stop Loss).
+
+---
+
 ## 📁 Estrutura de Arquivos
 
 ```
