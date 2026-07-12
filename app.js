@@ -271,7 +271,7 @@ async function refreshDashboard() {
         lineWidth: 1,
         lineStyle: LightweightCharts.LineStyle.Dotted,
         axisLabelVisible: true,
-        title: 'SUP',
+        title: '',
       });
       activePriceLines.push(line);
     });
@@ -283,7 +283,7 @@ async function refreshDashboard() {
         lineWidth: 1,
         lineStyle: LightweightCharts.LineStyle.Dotted,
         axisLabelVisible: true,
-        title: 'RES',
+        title: '',
       });
       activePriceLines.push(line);
     });
