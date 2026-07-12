@@ -165,6 +165,12 @@ function initCharts() {
  * Recarrega e renderiza dados nos gráficos e painéis com base nas seleções.
  */
 async function refreshDashboard() {
+  const chartsWrapper = document.querySelector('.charts-wrapper');
+  const predModule = document.getElementById('estrategia');
+
+  if (chartsWrapper) chartsWrapper.classList.add('loading');
+  if (predModule) predModule.classList.add('loading');
+
   try {
     document.getElementById('current-asset-title').innerText = `${currentAsset === 'BTC' ? 'Bitcoin' : currentAsset === 'ETH' ? 'Ethereum' : 'Solana'} (${currentAsset}/USD)`;
     document.getElementById('current-timeframe-badge').innerText = currentTimeframe;
@@ -172,6 +178,16 @@ async function refreshDashboard() {
     // 1. Obter velas de mercado
     const candles = await getCandleData(currentAsset, currentTimeframe);
     if (!candles || candles.length === 0) return;
+
+    // Forçar redimensionamento baseado no tamanho do container real para evitar largura 0px
+    const priceContainer = document.getElementById('price-chart-container');
+    const stochContainer = document.getElementById('stoch-chart-container');
+    if (priceChart && priceContainer) {
+      priceChart.resize(priceContainer.clientWidth || 800, priceContainer.clientHeight || 420);
+    }
+    if (stochChart && stochContainer) {
+      stochChart.resize(stochContainer.clientWidth || 800, stochContainer.clientHeight || 180);
+    }
 
     const closes = candles.map(c => c.close);
     const lastCandle = candles[candles.length - 1];
@@ -222,26 +238,26 @@ async function refreshDashboard() {
     activePriceLines = [];
 
     // Adicionar Suportes (verde) e Resistências (vermelho) mais próximos
-    srLevels.supports.slice(-3).forEach(level => {
+    srLevels.supports.forEach(level => {
       const line = candlestickSeries.createPriceLine({
         price: level,
-        color: '#10b981',
-        lineWidth: 1.5,
-        lineStyle: LightweightCharts.LineStyle.Dashed,
+        color: 'rgba(16, 185, 129, 0.35)',
+        lineWidth: 1,
+        lineStyle: LightweightCharts.LineStyle.Dotted,
         axisLabelVisible: true,
-        title: 'SUPORTE',
+        title: 'SUP',
       });
       activePriceLines.push(line);
     });
 
-    srLevels.resistances.slice(0, 3).forEach(level => {
+    srLevels.resistances.forEach(level => {
       const line = candlestickSeries.createPriceLine({
         price: level,
-        color: '#ef4444',
-        lineWidth: 1.5,
-        lineStyle: LightweightCharts.LineStyle.Dashed,
+        color: 'rgba(239, 68, 68, 0.35)',
+        lineWidth: 1,
+        lineStyle: LightweightCharts.LineStyle.Dotted,
         axisLabelVisible: true,
-        title: 'RESISTÊNCIA',
+        title: 'RES',
       });
       activePriceLines.push(line);
     });
@@ -274,6 +290,9 @@ async function refreshDashboard() {
 
   } catch (error) {
     console.error("Erro ao atualizar o painel analítico:", error);
+  } finally {
+    if (chartsWrapper) chartsWrapper.classList.remove('loading');
+    if (predModule) predModule.classList.remove('loading');
   }
 }
 

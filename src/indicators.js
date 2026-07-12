@@ -252,50 +252,90 @@ export function detectFVGs(candles) {
  * @returns {{supports: Array<number>, resistances: Array<number>}} Níveis de preços calculados
  */
 export function detectSupportResistance(candles) {
+  if (candles.length === 0) return { supports: [], resistances: [] };
+  
+  const currentPrice = candles[candles.length - 1].close;
   const pivots = [];
-  const strength = 3;
+  const strength = 4; // Pivôs mais significativos (4 velas de vizinhança)
 
+  // 1. Encontrar Pivôs
   for (let i = strength; i < candles.length - strength; i++) {
-    const lows = candles.slice(i - strength, i + strength + 1).map(c => c.low);
-    const highs = candles.slice(i - strength, i + strength + 1).map(c => c.high);
+    const slice = candles.slice(i - strength, i + strength + 1);
+    const lows = slice.map(c => c.low);
+    const highs = slice.map(c => c.high);
 
     // Suporte local
     if (candles[i].low === Math.min(...lows)) {
-      pivots.push({ price: candles[i].low, type: 'support' });
+      pivots.push({ price: candles[i].low, type: 'support', index: i });
     }
     // Resistência local
     if (candles[i].high === Math.max(...highs)) {
-      pivots.push({ price: candles[i].high, type: 'resistance' });
+      pivots.push({ price: candles[i].high, type: 'resistance', index: i });
     }
   }
 
-  // Agrupar níveis de preço próximos (dentro de 2% de diferença)
-  const groupLevels = (items) => {
-    if (items.length === 0) return [];
+  // 2. Contar Retestes (Touches) para cada pivô
+  const scoredPivots = pivots.map(p => {
+    let touches = 0;
+    const threshold = p.price * 0.012; // tolerância de 1.2%
     
-    const sorted = items.map(item => item.price).sort((a, b) => a - b);
-    const groups = [];
-    let currentGroup = [sorted[0]];
-
-    for (let i = 1; i < sorted.length; i++) {
-      const diff = (sorted[i] - sorted[i - 1]) / sorted[i - 1];
-      if (diff <= 0.02) {
-        currentGroup.push(sorted[i]);
+    // Contar retestes em todo o histórico
+    for (let j = 0; j < candles.length; j++) {
+      if (j === p.index) continue;
+      
+      const c = candles[j];
+      if (p.type === 'support') {
+        // Mínima da vela ou corpo perto do nível
+        if (Math.abs(c.low - p.price) <= threshold || Math.abs(Math.min(c.open, c.close) - p.price) <= threshold) {
+          touches++;
+        }
       } else {
-        groups.push(currentGroup.reduce((a, b) => a + b, 0) / currentGroup.length);
-        currentGroup = [sorted[i]];
+        // Máxima da vela ou corpo perto do nível
+        if (Math.abs(c.high - p.price) <= threshold || Math.abs(Math.max(c.open, c.close) - p.price) <= threshold) {
+          touches++;
+        }
       }
     }
-    groups.push(currentGroup.reduce((a, b) => a + b, 0) / currentGroup.length);
-    return groups;
+    
+    return { price: p.price, type: p.type, touches };
+  });
+
+  // 3. Mesclar níveis muito próximos (dentro de 2% de diferença)
+  // Classificar por quantidade de toques decrescente para priorizar os níveis mais fortes
+  const consolidate = (items) => {
+    const consolidated = [];
+    const sorted = items.sort((a, b) => b.touches - a.touches);
+
+    for (const item of sorted) {
+      const isTooClose = consolidated.some(c => Math.abs(c.price - item.price) / c.price <= 0.02);
+      if (!isTooClose) {
+        consolidated.push(item);
+      }
+    }
+    return consolidated;
   };
 
-  const rawSupports = pivots.filter(p => p.type === 'support');
-  const rawResistances = pivots.filter(p => p.type === 'resistance');
+  const supports = consolidate(scoredPivots.filter(p => p.type === 'support'));
+  const resistances = consolidate(scoredPivots.filter(p => p.type === 'resistance'));
+
+  // 4. Filtrar e ordenar em relação ao preço atual
+  // Suportes: abaixo do preço atual, ordenados do mais próximo ao mais distante
+  const activeSupports = supports
+    .filter(s => s.price < currentPrice)
+    .sort((a, b) => b.price - a.price)
+    .slice(0, 3)
+    .map(s => s.price);
+
+  // Resistências: acima do preço atual, ordenadas do mais próximo ao mais distante
+  const activeResistances = resistances
+    .filter(r => r.price > currentPrice)
+    .sort((a, b) => a.price - b.price)
+    .slice(0, 3)
+    .map(r => r.price);
 
   return {
-    supports: groupLevels(rawSupports),
-    resistances: groupLevels(rawResistances)
+    supports: activeSupports,
+    resistances: activeResistances
   };
 }
 
