@@ -296,16 +296,26 @@ async function refreshDashboard() {
     // 5. Coleta e atualização de dados On-Chain
     const onchain = getSimulatedOnChainData(currentAsset, currentPrice);
     
-    // Atualizar Sidebar On-Chain
-    document.getElementById('sidebar-mvrv-val').innerText = `${onchain.mvrvZscore.toFixed(2)} (${onchain.mvrvZscore < 0.5 ? 'Subvalorizado' : onchain.mvrvZscore > 2.0 ? 'Sobrevalorizado' : 'Neutro'})`;
-    document.getElementById('sidebar-mvrv-val').className = `val ${onchain.mvrvZscore < 0.5 ? 'text-green' : onchain.mvrvZscore > 2.0 ? 'text-red' : 'text-blue'}`;
+    // Atualizar Sidebar On-Chain (Defensivo)
+    const sidebarMvrv = document.getElementById('sidebar-mvrv-val');
+    const sidebarRainbow = document.getElementById('sidebar-rainbow-val');
+    const sidebarSth = document.getElementById('sidebar-sth-val');
+
+    if (sidebarMvrv) {
+      sidebarMvrv.innerText = `${onchain.mvrvZscore.toFixed(2)} (${onchain.mvrvZscore < 0.5 ? 'Subvalorizado' : onchain.mvrvZscore > 2.0 ? 'Sobrevalorizado' : 'Neutro'})`;
+      sidebarMvrv.className = `val ${onchain.mvrvZscore < 0.5 ? 'text-green' : onchain.mvrvZscore > 2.0 ? 'text-red' : 'text-blue'}`;
+    }
     
-    document.getElementById('sidebar-rainbow-val').innerText = onchain.rainbowBand;
-    document.getElementById('sidebar-rainbow-val').className = `val ${onchain.rainbowBand.includes('Acumular') || onchain.rainbowBand.includes('Barato') ? 'text-green' : 'text-blue'}`;
+    if (sidebarRainbow) {
+      sidebarRainbow.innerText = onchain.rainbowBand;
+      sidebarRainbow.className = `val ${onchain.rainbowBand.includes('Acumular') || onchain.rainbowBand.includes('Barato') ? 'text-green' : 'text-blue'}`;
+    }
     
-    const pctToSth = ((currentPrice - onchain.sthRp) / onchain.sthRp) * 100;
-    document.getElementById('sidebar-sth-val').innerText = `${pctToSth >= 0 ? '+' : ''}${pctToSth.toFixed(1)}%`;
-    document.getElementById('sidebar-sth-val').className = `val ${pctToSth >= 0 ? 'text-green' : 'text-red'}`;
+    if (sidebarSth) {
+      const pctToSth = ((currentPrice - onchain.sthRp) / onchain.sthRp) * 100;
+      sidebarSth.innerText = `${pctToSth >= 0 ? '+' : ''}${pctToSth.toFixed(1)}%`;
+      sidebarSth.className = `val ${pctToSth >= 0 ? 'text-green' : 'text-red'}`;
+    }
 
     // 6. Rodar o Motor de Predição (SCM)
     const prediction = runPredictionEngine(
