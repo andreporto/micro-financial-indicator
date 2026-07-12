@@ -124,11 +124,11 @@ function initCharts() {
   });
 
   // Linhas das médias móveis
-  ema9Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.ema9, lineWidth: 1.5, crosshairMarkerVisible: false, lastValueVisible: false });
-  ema21Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.ema21, lineWidth: 1.5, crosshairMarkerVisible: false, lastValueVisible: false });
-  ema52Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.ema52, lineWidth: 1.5, crosshairMarkerVisible: false, lastValueVisible: false });
-  sma100Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.sma100, lineWidth: 2, crosshairMarkerVisible: false, lastValueVisible: false });
-  sma200Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.sma200, lineWidth: 2.5, crosshairMarkerVisible: false, lastValueVisible: false });
+  ema9Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.ema9, lineWidth: 1.5, crosshairMarkerVisible: false, lastValueVisible: true, priceLineVisible: false });
+  ema21Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.ema21, lineWidth: 1.5, crosshairMarkerVisible: false, lastValueVisible: true, priceLineVisible: false });
+  ema52Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.ema52, lineWidth: 1.5, crosshairMarkerVisible: false, lastValueVisible: true, priceLineVisible: false });
+  sma100Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.sma100, lineWidth: 2, crosshairMarkerVisible: false, lastValueVisible: true, priceLineVisible: false });
+  sma200Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.sma200, lineWidth: 2.5, crosshairMarkerVisible: false, lastValueVisible: true, priceLineVisible: false });
 
   // 2. Criar Gráfico de RSI
   rsiChart = LightweightCharts.createChart(rsiContainer, {
