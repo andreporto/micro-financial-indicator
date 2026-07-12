@@ -406,29 +406,91 @@ function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels) {
 
   // 4. Preencher tabela de fatores de confluência
   const tbody = document.querySelector('#scoring-table tbody');
-  tbody.innerHTML = '';
-  prediction.details.forEach(item => {
-    const tr = document.createElement('tr');
-    
-    const tdFactor = document.createElement('td');
-    tdFactor.innerText = item.factor;
-    
-    const tdScore = document.createElement('td');
-    if (item.score > 0) {
-      tdScore.innerText = `+${item.score}`;
-      tdScore.className = 'score-plus';
-    } else if (item.score < 0) {
-      tdScore.innerText = `${item.score}`;
-      tdScore.className = 'score-minus';
-    } else {
-      tdScore.innerText = '0';
-      tdScore.className = 'text-muted';
-    }
+  if (tbody) {
+    tbody.innerHTML = '';
+    prediction.details.forEach(item => {
+      const tr = document.createElement('tr');
+      
+      const tdFactor = document.createElement('td');
+      tdFactor.innerText = item.factor;
+      
+      const tdScore = document.createElement('td');
+      if (item.score > 0) {
+        tdScore.innerText = `+${item.score}`;
+        tdScore.className = 'score-plus';
+      } else if (item.score < 0) {
+        tdScore.innerText = `${item.score}`;
+        tdScore.className = 'score-minus';
+      } else {
+        tdScore.innerText = '0';
+        tdScore.className = 'text-muted';
+      }
 
-    tr.appendChild(tdFactor);
-    tr.appendChild(tdScore);
-    tbody.appendChild(tr);
+      tr.appendChild(tdFactor);
+      tr.appendChild(tdScore);
+      tbody.appendChild(tr);
+    });
+  }
+
+  // 5. Atualizar Aba On-Chain Expandida
+  const rainbowText = document.getElementById('onchain-rainbow-band');
+  if (rainbowText) rainbowText.innerText = onchain.rainbowBand;
+
+  // Atualizar segmento ativo do Rainbow Chart
+  let bandIndex = 4;
+  const band = onchain.rainbowBand;
+  if (band.includes('Bolha Máxima') || band.includes('Venda')) bandIndex = 0;
+  else if (band.includes('Bolha') || band.includes('FOMO')) bandIndex = 1;
+  else if (band.includes('Bolha?')) bandIndex = 2;
+  else if (band.includes('HODL')) bandIndex = 3;
+  else if (band.includes('Ainda Barato')) bandIndex = 4;
+  else if (band.includes('Acumular')) bandIndex = 5;
+  else if (band.includes('Comprar')) bandIndex = 6;
+  else if (band.includes('Liquidação')) bandIndex = 7;
+
+  const segments = document.querySelectorAll('.rainbow-segment');
+  segments.forEach((s, idx) => {
+    if (idx === bandIndex) {
+      s.classList.add('active');
+    } else {
+      s.classList.remove('active');
+    }
   });
+
+  // Atualizar MVRV Z-Score
+  const mvrvText = document.getElementById('onchain-mvrv-score');
+  if (mvrvText) mvrvText.innerText = onchain.mvrvZscore.toFixed(2);
+
+  const mvrvFill = document.getElementById('onchain-mvrv-progress');
+  if (mvrvFill) {
+    const pct = Math.min(100, Math.max(0, (onchain.mvrvZscore / 3.5) * 100));
+    mvrvFill.style.width = `${pct}%`;
+  }
+
+  // Atualizar Realized Prices
+  const sthText = document.getElementById('onchain-sth-rp');
+  if (sthText) sthText.innerText = `$${Math.round(onchain.sthRp).toLocaleString()}`;
+
+  const lthText = document.getElementById('onchain-lth-rp');
+  if (lthText) lthText.innerText = `$${Math.round(onchain.lthRp).toLocaleString()}`;
+
+  const relationText = document.getElementById('onchain-realized-relation');
+  if (relationText) {
+    if (currentPrice > onchain.sthRp && onchain.sthRp > onchain.lthRp) {
+      relationText.innerText = "O preço está acima de ambos os custos de aquisição (STH-RP e LTH-RP), confirmando a estrutura saudável de alta.";
+      relationText.className = "realized-price-status"; // Verde/Bullish
+    } else if (currentPrice < onchain.sthRp && currentPrice > onchain.lthRp) {
+      relationText.innerText = "O preço perdeu o suporte de curto prazo (STH-RP), mas permanece acima do suporte de longo prazo (LTH-RP). Alerta de consolidação.";
+      relationText.className = "realized-price-status text-blue"; // Azul/Neutro
+      relationText.style.backgroundColor = "rgba(59, 130, 246, 0.1)";
+      relationText.style.borderColor = "rgba(59, 130, 246, 0.2)";
+    } else {
+      relationText.innerText = "O preço está abaixo de ambos os custos (LTH-RP e STH-RP). Fase de capitulação histórica do mercado de baixa.";
+      relationText.className = "realized-price-status text-red"; // Vermelho/Bearish
+      relationText.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+      relationText.style.borderColor = "rgba(239, 68, 68, 0.2)";
+    }
+  }
 }
 
 /**
@@ -485,6 +547,36 @@ function setupEventListeners() {
       const panels = document.querySelectorAll('.tab-panel');
       panels.forEach(p => p.classList.remove('active'));
       document.getElementById(`tab-${targetTab}`).classList.add('active');
+    });
+  });
+
+  // Abas Principais (Navbar)
+  const mainTabButtons = document.querySelectorAll('#main-tabs .tab-link');
+  mainTabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      mainTabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const targetTab = btn.dataset.mainTab;
+      const panels = document.querySelectorAll('.main-panel');
+      panels.forEach(p => p.classList.remove('active'));
+      
+      const targetPanel = document.getElementById(`panel-${targetTab}`);
+      if (targetPanel) targetPanel.classList.add('active');
+
+      // Se a aba for o dashboard, forçar redimensionamento dos gráficos para calcular o layout visível
+      if (targetTab === 'dashboard') {
+        setTimeout(() => {
+          const priceContainer = document.getElementById('price-chart-container');
+          const stochContainer = document.getElementById('stoch-chart-container');
+          if (priceChart && priceContainer) {
+            priceChart.resize(priceContainer.clientWidth || 800, priceContainer.clientHeight || 420);
+          }
+          if (stochChart && stochContainer) {
+            stochChart.resize(stochContainer.clientWidth || 800, stochContainer.clientHeight || 180);
+          }
+        }, 50);
+      }
     });
   });
 }
