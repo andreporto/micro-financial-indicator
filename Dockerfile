@@ -1,11 +1,11 @@
-# Imagem base leve do Nginx para servir arquivos estáticos
+# Lightweight Nginx base image to serve static files
 FROM nginx:alpine
 
-# Copiar todos os arquivos estáticos do projeto para a pasta padrão do Nginx
+# Copy all static files of the project to the default Nginx folder
 COPY . /usr/share/nginx/html
 
-# Expor a porta 80 padrão do Nginx
+# Expose the default Nginx port 80
 EXPOSE 80
 
-# Iniciar o Nginx em primeiro plano
+# Start Nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]

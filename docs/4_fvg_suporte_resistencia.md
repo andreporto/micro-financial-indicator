@@ -1,59 +1,59 @@
-# Funcionalidade 4: Fair Value Gaps (FVG) e Zonas de Suporte/Resistência (S/R)
+# Feature 4: Fair Value Gaps (FVG) and Support/Resistance (S/R) Zones
 
-Esta funcionalidade é dedicada ao mapeamento automático de desequilíbrios de preço (Fair Value Gaps - FVG) e à demarcação de zonas macro de suporte e resistência no gráfico.
+This feature is dedicated to the automatic mapping of price imbalances (Fair Value Gaps - FVG) and the demarcation of macro support and resistance zones on the chart.
 
 ---
 
 ## 1. Fair Value Gaps (FVG)
 
-Um **Fair Value Gap (FVG)** ocorre quando há uma vela central de forte expansão impulsionada por um desequilíbrio entre a oferta e a demanda, deixando um espaço que o preço tende a revisitar para reequilibrar o mercado (mitigação).
+A **Fair Value Gap (FVG)** occurs when there is a central candle of strong expansion driven by an imbalance between supply and demand, leaving a gap that the price tends to revisit to rebalance the market (mitigation).
 
-### 1.1. Lógica de Identificação (3 Velas consecutivas: $C_1, C_2, C_3$)
+### 1.1. Identification Logic (3 Consecutive Candles: $C_1, C_2, C_3$)
 
-* **Bullish FVG (Gap de Alta)**:
-  - Condição: A mínima da Vela 3 ($Low_3$) é estritamente maior que a máxima da Vela 1 ($High_1$).
-  - Zona do FVG: Intervalo $[High_1, Low_3]$.
-  - Representação Visual: Retângulo verde translúcido estendendo-se para a direita.
+* **Bullish FVG**:
+  - Condition: Candle 3 Low ($Low_3$) is strictly greater than Candle 1 High ($High_1$).
+  - FVG Zone: Interval $[High_1, Low_3]$.
+  - Visual Representation: Translucent green rectangle extending to the right.
 
-* **Bearish FVG (Gap de Baixa)**:
-  - Condição: A máxima da Vela 3 ($High_3$) é estritamente menor que a mínima da Vela 1 ($Low_1$).
-  - Zona do FVG: Intervalo $[High_3, Low_1]$.
-  - Representação Visual: Retângulo vermelho/rosa translúcido estendendo-se para a direita.
+* **Bearish FVG**:
+  - Condition: Candle 3 High ($High_3$) is strictly less than Candle 1 Low ($Low_1$).
+  - FVG Zone: Interval $[High_3, Low_1]$.
+  - Visual Representation: Translucent red/pink rectangle extending to the right.
 
 ```
    Bullish FVG (Visual):
    
-   Vela 3 (Alta)   |---| (Mínima = Low3)
-                   |   |
-   ================|===|============== [Limite Superior do FVG = Low3]
-   Vela 2 (Impulso)|   | (Vela Gigante sem pavios sobrepostos)
-   ================|===|============== [Limite Inferior do FVG = High1]
-                   |   |
-   Vela 1 (Alta)   |---| (Máxima = High1)
+   Candle 3 (Bullish)   |---| (Low = Low3)
+                        |   |
+   =====================|===|============== [Upper Limit of FVG = Low3]
+   Candle 2 (Impulse)   |   | (Huge candle with no overlapping wicks)
+   =====================|===|============== [Lower Limit of FVG = High1]
+                        |   |
+   Candle 1 (Bullish)   |---| (High = High1)
 ```
 
-### 1.2. Algoritmo de Mitigação (Preenchimento do FVG)
-Um FVG permanece "ativo" até que o preço de velas futuras cruze completamente a zona do gap:
-* Para um **Bullish FVG**: Se o preço de fechamento ou mínima de qualquer vela subsequente for menor ou igual ao limite inferior ($High_1$), o FVG é marcado como *mitigado* (removido do gráfico).
-* Para um **Bearish FVG**: Se a máxima ou fechamento de qualquer vela subsequente for maior ou igual ao limite superior ($Low_1$), o FVG está *mitigado*.
+### 1.2. Mitigation Algorithm (Filling the FVG)
+An FVG remains "active" until future candle prices completely cross the gap zone:
+* For a **Bullish FVG**: If the closing price or low of any subsequent candle is less than or equal to the lower limit ($High_1$), the FVG is marked as *mitigated* (removed from the chart).
+* For a **Bearish FVG**: If the high or close of any subsequent candle is greater than or equal to the upper limit ($Low_1$), the FVG is *mitigated*.
 
 ---
 
-## 2. Zonas de Suporte e Resistência (S/R)
+## 2. Support and Resistance Zones (S/R)
 
-Em vez de linhas finas que geram falsos rompimentos, definimos **zonas** com base em pivôs de alta relevância (Swing Highs/Lows) no gráfico semanal e mensal.
+Instead of thin lines that generate false breakouts, we define **zones** based on highly relevant pivots (Swing Highs/Lows) on the weekly and monthly charts.
 
-### 2.1. Lógica de Agrupamento (Clustering)
-1. **Identificar Pivôs**: Encontrar topos e fundos locais importantes ($Swing\ Highs$ e $Swing\ Lows$).
-2. **Agrupamento de Proximidade**: Se dois ou mais pivôs estiverem dentro de uma distância de $\pm 1.5\%$ do preço de cada um, agrupamos esses níveis em uma única **Zona S/R**.
-3. **Cálculo da Zona**:
-   - A borda superior da zona é a máxima dos pavios dos pivôs agrupados.
-   - A borda inferior é a mínima dos fechamentos/aberturas dos pivôs agrupados (corpos das velas).
-4. **Força do Suporte/Resistência**: Contar quantas vezes o preço tocou e respeitou a zona. Zonas com mais toques ganham maior opacidade e espessura na interface.
+### 2.1. Clustering Logic
+1. **Identify Pivots**: Find important local tops and bottoms ($Swing\ Highs$ and $Swing\ Lows$).
+2. **Proximity Clustering**: If two or more pivots are within a distance of $\pm 1.5\%$ of each other's price, we group these levels into a single **S/R Zone**.
+3. **Zone Calculation**:
+   - The upper edge of the zone is the maximum of the wicks of the grouped pivots.
+   - The lower edge is the minimum of the closes/opens of the grouped pivots (candle bodies).
+4. **Support/Resistance Strength**: Count how many times price touched and respected the zone. Zones with more touches gain greater opacity and thickness in the interface.
 
 ---
 
-## 3. Código Exemplo (TypeScript)
+## 3. Example Code (TypeScript)
 
 ```typescript
 interface FVG {
@@ -70,10 +70,10 @@ export function detectFVGs(candles: { high: number; low: number }[]): FVG[] {
 
   for (let i = 2; i < candles.length; i++) {
     const c1 = candles[i - 2];
-    const c2 = candles[i - 1]; // Vela do meio (forte expansão)
+    const c2 = candles[i - 1]; // Middle candle (strong expansion)
     const c3 = candles[i];
 
-    // 1. Detectar Bullish FVG
+    // 1. Detect Bullish FVG
     if (c3.low > c1.high) {
       fvgs.push({
         id: `bullish-fvg-${i}`,
@@ -85,7 +85,7 @@ export function detectFVGs(candles: { high: number; low: number }[]): FVG[] {
       });
     }
 
-    // 2. Detectar Bearish FVG
+    // 2. Detect Bearish FVG
     if (c3.high < c1.low) {
       fvgs.push({
         id: `bearish-fvg-${i}`,
@@ -98,7 +98,7 @@ export function detectFVGs(candles: { high: number; low: number }[]): FVG[] {
     }
   }
 
-  // Verificar Mitigação ao longo do histórico
+  // Check Mitigation throughout history
   for (let f = 0; f < fvgs.length; f++) {
     const fvg = fvgs[f];
     const checkStartIndex = fvg.startIndex + 2;
@@ -121,7 +121,7 @@ export function detectFVGs(candles: { high: number; low: number }[]): FVG[] {
 
 ---
 
-## 4. Renderização no TradingView
-No `@tradingview/lightweight-charts`, desenhamos retângulos usando a funcionalidade de marcação ou linhas de preço (`PriceLine` / custom drawings) para cobrir o intervalo de tempo do FVG ativo:
-* Retângulos Bullish FVG ativos são exibidos em verde translúcido (`rgba(16, 185, 129, 0.15)`).
-* Retângulos Bearish FVG ativos em vermelho translúcido (`rgba(239, 68, 68, 0.15)`).
+## 4. Rendering in TradingView
+In `@tradingview/lightweight-charts`, we draw rectangles using markings or price lines (`PriceLine` / custom drawings) to cover the time range of the active FVG:
+* Active Bullish FVG rectangles are displayed in translucent green (`rgba(16, 185, 129, 0.15)`).
+* Active Bearish FVG rectangles are displayed in translucent red (`rgba(239, 68, 68, 0.15)`).

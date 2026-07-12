@@ -1,66 +1,66 @@
-# Funcionalidade 3: Detector de Divergências no Stochastic RSI
+# Feature 3: Divergence Detector on Stochastic RSI
 
-Esta funcionalidade descreve o algoritmo responsável por mapear e alertar divergências de alta (Bullish) e de baixa (Bearish) entre a ação do preço e o indicador Stochastic RSI.
-
----
-
-## 1. O que são Divergências?
-
-As divergências ocorrem quando a direção dos topos ou fundos do preço difere da direção dos topos ou fundos do indicador Stochastic RSI. Elas são sinais poderosos de reversão de tendência, especialmente em tempos gráficos elevados (HTF).
-
-* **Divergência Regular de Alta (Bullish)**:
-  * **Preço**: Faz um Fundo Mais Baixo (Lower Low - LL).
-  * **Stoch RSI**: Faz um Fundo Mais Alto (Higher Low - HL).
-  * *Interpretação*: O preço está caindo, mas a pressão vendedora (momentum) está se esgotando. Alta probabilidade de reversão para cima.
-* **Divergência Regular de Baixa (Bearish)**:
-  * **Preço**: Faz um Topo Mais Alto (Higher High - HH).
-  * **Stoch RSI**: Faz um Topo Mais Baixo (Lower High - LH).
-  * *Interpretação*: O preço está subindo, mas a pressão compradora (momentum) está perdendo força. Alta probabilidade de reversão para baixo.
+This feature describes the algorithm responsible for mapping and alerting bullish and bearish divergences between price action and the Stochastic RSI indicator.
 
 ---
 
-## 2. O Algoritmo de Detecção Passo a Passo
+## 1. What are Divergences?
 
-O scanner executa as seguintes etapas matemáticas em uma série temporal de tamanho $M$ (ex: últimas 100 velas):
+Divergences occur when the direction of price peaks/troughs differs from the direction of peaks/troughs of the Stochastic RSI indicator. They are powerful signals of trend reversal, especially on High Time Frames (HTF).
+
+* **Regular Bullish Divergence**:
+  * **Price**: Makes a Lower Low (LL).
+  * **Stoch RSI**: Makes a Higher Low (HL).
+  * *Interpretation*: The price is falling, but the selling pressure (momentum) is exhausting. High probability of upward reversal.
+* **Regular Bearish Divergence**:
+  * **Price**: Makes a Higher High (HH).
+  * **Stoch RSI**: Makes a Lower High (LH).
+  * *Interpretation*: The price is rising, but the buying pressure (momentum) is losing strength. High probability of downward reversal.
+
+---
+
+## 2. The Detection Algorithm Step-by-Step
+
+The scanner executes the following mathematical steps on a time series of size $M$ (e.g. last 100 candles):
 
 ```mermaid
 graph TD
-    Start[Iniciar Busca com Dados Recentes] --> FindPivots[Encontrar Pivôs Locais no Preço e no Stoch RSI]
-    FindPivots --> CheckBullish{Preço fez LL e Stoch RSI fez HL?}
-    FindPivots --> CheckBearish{Preço fez HH e Stoch RSI fez LH?}
+    Start[Start Search with Recent Data] --> FindPivots[Find Local Pivots in Price and Stoch RSI]
+    FindPivots --> CheckBullish{Price made LL and Stoch RSI made HL?}
+    FindPivots --> CheckBearish{Price made HH and Stoch RSI made LH?}
     
-    CheckBullish -->|Sim| VerifyBullishZone{Fundo do Stoch RSI ocorreu abaixo de 20?}
-    VerifyBullishZone -->|Sim| SignalBullish[Registrar Divergência Bullish]
-    VerifyBullishZone -->|Não| IgnoreBullish[Ignorar Sinal - Sem exaustão]
+    CheckBullish -->|Yes| VerifyBullishZone{Stoch RSI bottom occurred below 20?}
+    VerifyBullishZone -->|Yes| SignalBullish[Register Bullish Divergence]
+    VerifyBullishZone -->|No| IgnoreBullish[Ignore Signal - No exhaustion]
     
-    CheckBearish -->|Sim| VerifyBearishZone{Topo do Stoch RSI ocorreu acima de 80?}
-    VerifyBearishZone -->|Sim| SignalBearish[Registrar Divergência Bearish]
-    VerifyBearishZone -->|Não| IgnoreBearish[Ignorar Sinal - Sem exaustão]
+    CheckBearish -->|Yes| VerifyBearishZone{Stoch RSI top occurred above 80?}
+    VerifyBearishZone -->|Yes| SignalBearish[Register Bearish Divergence]
+    VerifyBearishZone -->|No| IgnoreBearish[Ignore Signal - No exhaustion]
 ```
 
-### Passo 1: Definição de Pivôs (Topos e Fundos Locais)
-Um pivô de baixa (fundo local) ocorre na vela $i$ se a sua mínima for menor que as mínimas das velas vizinhas à esquerda e à direita:
+### Step 1: Pivot Definition (Local Tops and Bottoms)
+A low pivot (local bottom) occurs at candle $i$ if its low is less than the lows of the neighboring candles to the left and right:
 $$\text{Low}_{i} < \min(\text{Low}_{i-1}, \text{Low}_{i-2}, \text{Low}_{i+1}, \text{Low}_{i+2})$$
-*(Isso é um pivô com força 2, ou seja, 2 velas de cada lado).*
+*(This is a pivot of strength 2, meaning 2 candles on each side).*
 
-### Passo 2: Comparação de Dois Pivôs Sucessivos
-Identificamos os dois pivôs mais recentes no preço: $P_1$ (pivô anterior) no índice $t_1$, e $P_2$ (pivô mais recente) no índice $t_2$, onde $t_2 > t_1$.
+### Step 2: Comparison of Two Successive Pivots
+We identify the two most recent pivots in the price: $P_1$ (previous pivot) at index $t_1$, and $P_2$ (most recent pivot) at index $t_2$, where $t_2 > t_1$.
 
-* Para **Divergência Bullish**:
-  1. $P_2$ é menor que $P_1$ no Preço: $\text{Low}(t_2) < \text{Low}(t_1)$.
-  2. Identificar os valores correspondentes de Stoch RSI (%K) no mesmo período: $I_1 = \text{StochRSI}(t_1)$ e $I_2 = \text{StochRSI}(t_2)$.
-  3. Verificar se o indicador subiu: $I_2 > I_1$.
-  4. Garantir exaustão: $I_2 \le 20$ ou $I_1 \le 20$.
+* **For Bullish Divergence**:
+  1. $P_2$ is lower than $P_1$ in Price: $\text{Low}(t_2) < \text{Low}(t_1)$.
+  2. Identify the corresponding Stoch RSI (%K) values in the same period: $I_1 = \text{StochRSI}(t_1)$ and $I_2 = \text{StochRSI}(t_2)$.
+  3. Verify if the indicator went up: $I_2 > I_1$.
+  4. Ensure exhaustion: $I_2 \le 20$ or $I_1 \le 20$.
 
-* Para **Divergência Bearish**:
-  1. $P_2$ é maior que $P_1$ no Preço: $\text{High}(t_2) > \text{High}(t_1)$.
-  2. Identificar os valores correspondentes de Stoch RSI (%K) no mesmo período: $I_1 = \text{StochRSI}(t_1)$ e $I_2 = \text{StochRSI}(t_2)$.
-  3. Verificar se o indicador caiu: $I_2 < I_1$.
-  4. Garantir exaustão: $I_2 \ge 80$ ou $I_1 \ge 80$.
+* **For Bearish Divergence**:
+  1. $P_2$ is higher than $P_1$ in Price: $\text{High}(t_2) > \text{High}(t_1)$.
+  2. Identify the corresponding Stoch RSI (%K) values in the same period: $I_1 = \text{StochRSI}(t_1)$ and $I_2 = \text{StochRSI}(t_2)$.
+  3. Verify if the indicator fell: $I_2 < I_1$.
+  4. Ensure exhaustion: $I_2 \ge 80$ or $I_1 \ge 80$.
 
 ---
 
-## 3. Código Exemplo (TypeScript)
+## 3. Example Code (TypeScript)
 
 ```typescript
 interface Pivot {
@@ -72,30 +72,30 @@ interface Pivot {
 
 export function findDivergences(prices: number[], indicator: number[], windowSize = 30): 'BULLISH' | 'BEARISH' | 'NONE' {
   const pivots: Pivot[] = [];
-  const strength = 2; // Velas para confirmação
+  const strength = 2; // Candles for confirmation
 
-  // 1. Encontrar Pivôs
+  // 1. Find Pivots
   for (let i = strength; i < prices.length - strength; i++) {
-    // Pivô de Fundo (Low)
+    // Low Pivot
     if (prices[i] < Math.min(...prices.slice(i - strength, i)) && 
         prices[i] < Math.min(...prices.slice(i + 1, i + strength + 1))) {
       pivots.push({ index: i, price: prices[i], indicatorValue: indicator[i], type: 'low' });
     }
-    // Pivô de Topo (High)
+    // High Pivot
     if (prices[i] > Math.max(...prices.slice(i - strength, i)) && 
         prices[i] > Math.max(...prices.slice(i + 1, i + strength + 1))) {
       pivots.push({ index: i, price: prices[i], indicatorValue: indicator[i], type: 'high' });
     }
   }
 
-  // Pegar os dois últimos pivôs de cada tipo
+  // Get the last two pivots of each type
   const lowPivots = pivots.filter(p => p.type === 'low').slice(-2);
   const highPivots = pivots.filter(p => p.type === 'high').slice(-2);
 
-  // 2. Verificar Divergência Bullish
+  // 2. Check Bullish Divergence
   if (lowPivots.length === 2) {
     const [p1, p2] = lowPivots;
-    // O pivô mais recente deve estar dentro da janela analisada
+    // The most recent pivot must be within the analyzed window
     if (prices.length - p2.index <= windowSize) {
       if (p2.price < p1.price && p2.indicatorValue > p1.indicatorValue && (p2.indicatorValue <= 25 || p1.indicatorValue <= 25)) {
         return 'BULLISH';
@@ -103,7 +103,7 @@ export function findDivergences(prices: number[], indicator: number[], windowSiz
     }
   }
 
-  // 3. Verificar Divergência Bearish
+  // 3. Check Bearish Divergence
   if (highPivots.length === 2) {
     const [p1, p2] = highPivots;
     if (prices.length - p2.index <= windowSize) {
@@ -119,6 +119,6 @@ export function findDivergences(prices: number[], indicator: number[], windowSiz
 
 ---
 
-## 4. UI/UX dos Alertas
-* **Visualização no Gráfico**: Plotar uma linha tracejada violeta ligando os dois fundos/topos no gráfico de preços e no oscilador, com uma seta apontando a direção da divergência.
-* **Badge de Status**: Na parte superior direita do dashboard, exibir um badge piscante em neon verde `Divergência Bullish (1w)` ou vermelho `Divergência Bearish (3d)`.
+## 4. Alerts UI/UX
+* **Chart Visualization**: Plot a violet dashed line connecting the two bottoms/tops on the price chart and the oscillator, with an arrow pointing the direction of the divergence.
+* **Status Badge**: On the top right of the dashboard, display a flashing neon green badge like `Bullish Divergence (1w)` or red `Bearish Divergence (3d)`.

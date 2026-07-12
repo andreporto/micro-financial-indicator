@@ -1,31 +1,31 @@
-# 📊 SaaS Financial Indicator - Dashboard & Documentação Interativa
+# 📊 SaaS Financial Indicator - Dashboard & Interactive Documentation
 
-Este repositório contém a implementação completa de uma plataforma SaaS financeira moderna e contemporânea voltada para a análise técnica e fundamental macro de criptoativos (**BTC, ETH, SOL**) em tempos gráficos elevados (HTF) integrada a dados on-chain de alta fidelidade.
+This repository contains the complete implementation of a modern, contemporary financial SaaS platform focused on technical and macro fundamental analysis of crypto assets (**BTC, ETH, SOL**) on high time frames (HTF) integrated with high-fidelity on-chain data.
 
-A aplicação utiliza um design de informações limpo e profissional, estruturado em **Abas Modulares** com navegação fluida, utilizando uma paleta de cores harmoniosa em azul escuro, branco, cinza e tons funcionais de sinalização (verde bullish, vermelho bearish, laranja de aviso).
-
----
-
-## 🚀 Funcionalidades Principais
-
-*   **Dashboard Técnico com 3 Gráficos Sincronizados**: 
-    *   Gráfico de Preço (Velas, EMA 9/21/52, SMA 100/200, FVG e Suporte/Resistência).
-    *   Gráfico de RSI Clássico com limites em 30 e 70.
-    *   Gráfico de Stochastic RSI (%K e %D) com limites em 20 e 80.
-    *   *Sincronização Bidirecional*: O zoom e scroll manual em qualquer um dos três gráficos replica-se instantaneamente nos demais (escala de barras lógica alinhada via Whitespace).
-*   **Algoritmo de Suporte & Resistência Inteligente**: Pivôs consolidados por volume de toques históricos e reclassificados dinamicamente via regra de **Inversão de Papel (Role Reversal)** em relação ao preço spot.
-*   **Motor de Predição (SCM)**: O *Score de Confluência Multidimensional* pondera indicadores de tendência, momento, price action e on-chain para calcular o viés e zonas táticas para os próximos 60 dias.
-*   **Dados On-Chain Consolidados**: Seção visual expandida exibindo a faixa atual do **Rainbow Chart**, progresso do **MVRV Z-Score** e margem em relação ao custo médio de curto (**STH-RP**) e longo prazo (**LTH-RP**).
-*   **Aviso de Isenção de Responsabilidade (Disclaimer)**: Informações claras e visíveis no Hero, aba de predição e rodapé, detalhando a natureza probabilística e puramente educacional das simulações da IA.
+The application uses a clean and professional information design structured into **Modular Tabs** with fluid navigation. It utilizes a harmonious color palette featuring dark blue, white, gray, and functional signaling colors (bullish green, bearish red, orange warning).
 
 ---
 
-## 🧠 Como a Inteligência Artificial (SCM Engine) é Utilizada
+## 🚀 Key Features
 
-O projeto adota uma abordagem de **IA Baseada em Confluência Quantitativa (Sistemas Especialistas de Heurística Determinística)** para calcular o viés macro. Em vez de redes neurais genéricas ou LLMs (que geram "alucinações financeiras" em números), o motor SCM (Score de Confluência Multidimensional) simula o comportamento lógico de um analista quantitativo automatizado, garantindo 100% de precisão matemática e reprodutibilidade de dados.
+*   **Technical Dashboard with 3 Synchronized Charts**: 
+    *   Price Chart (Candles, EMA 9/21/52, SMA 100/200, FVG, and Support/Resistance).
+    *   Classic RSI Chart with thresholds at 30 and 70.
+    *   Stochastic RSI Chart (%K and %D) with thresholds at 20 and 80.
+    *   *Bidirectional Synchronization*: Manual zoom and scroll on any of the three charts instantly propagates to the others (logical bar scale aligned via Whitespace).
+*   **Intelligent Support & Resistance Algorithm**: Consolidated pivots by historical touch volume and dynamically reclassified via the **Role Reversal** rule in relation to the spot price.
+*   **Prediction Engine (SCM)**: The *Multidimensional Confluence Score* weights trend, momentum, price action, and on-chain indicators to calculate market bias and tactical zones for the next 60 days.
+*   **Consolidated On-Chain Data**: Expanded visual section displaying the current band of the **Rainbow Chart**, **MVRV Z-Score** progress, and margin against the short-term (**STH-RP**) and long-term (**LTH-RP**) realized prices.
+*   **Disclaimer**: Clear and visible information on the Hero, prediction tab, and footer, detailing the probabilistic and purely educational nature of the AI simulations.
 
-### 🔌 Como a IA é chamada no Código
-A inteligência preditiva é ativada no fluxo de atualização do Dashboard no arquivo [app.js](file:///home/coderbr/coderbr-lab/saas-financial-indicator/app.js) ao invocar a função `runPredictionEngine` exportada por [src/indicators.js](file:///home/coderbr/coderbr-lab/saas-financial-indicator/src/indicators.js) a cada recarga de gráfico:
+---
+
+## 🧠 How Artificial Intelligence (SCM Engine) is Used
+
+The project adopts a **Quantitative Confluence-Based AI** approach (Specialist Systems of Deterministic Heuristics) to calculate macro bias. Instead of generic neural networks or LLMs (which generate "financial hallucinations" in numbers), the SCM (Multidimensional Confluence Score) engine simulates the logical behavior of an automated quant analyst, ensuring 100% mathematical accuracy and data reproducibility.
+
+### 🔌 How AI is Called in the Code
+Predictive intelligence is activated in the Dashboard update flow in [app.js](app.js) by calling the `runPredictionEngine` function exported by [src/indicators.js](src/indicators.js) during every chart refresh:
 
 ```javascript
 const prediction = runPredictionEngine(
@@ -33,163 +33,397 @@ const prediction = runPredictionEngine(
   { closes, ema9, ema21, ema52, sma100, sma200, rsi: stochRsi.rsi, stochK: stochRsi.k },
   fvgs,
   srLevels,
-  onchain
+  onchain,
+  currentTimeframe
 );
 ```
 
-### ⚙️ Lógica de Análise e Matriz de Decisão
-O motor pondera os dados coletados estruturando a tese em 4 pilares:
-1.  **Tendência Macro (40%)**: Avalia se o preço está acima da EMA 21 Semanal (tendência primária) e se há alinhamento de alta (EMA 9 > 21 > 52).
-2.  **Momentum & Exaustão (20%)**: Verifica divergências no Stochastic RSI e se o RSI diário/semanal está em zonas de sobrecompra/sobrevenda extremas.
-3.  **Price Action & Liquidez (20%)**: Detecta se o preço está em zonas de rebalanceamento (Fair Value Gaps) e a distância até suportes/resistências consolidados.
-4.  **Saúde On-Chain (20%)**: Compara o preço spot com os preços realizados históricos (STH-RP e LTH-RP) e avalia o desvio padrão do MVRV Z-Score.
+### ⚙️ Analysis Logic and Decision Matrix
+The engine weights the collected data, structuring the thesis into 4 pillars:
+1.  **Macro Trend (40%)**: Evaluates whether the price is above the EMA 21 for the selected timeframe (primary trend) and if there is a bullish alignment (EMA 9 > 21 > 52).
+2.  **Momentum & Exhaustion (20%)**: Checks for Stoch RSI divergences and whether the RSI is in extreme overbought/oversold zones.
+3.  **Price Action & Liquidity (20%)**: Detects if the price is in rebalancing zones (Fair Value Gaps) and the distance to consolidated supports/resistances.
+4.  **On-Chain Health (20%)**: Compares spot price with historical realized prices (STH-RP and LTH-RP) and evaluates the MVRV Z-Score standard deviation.
 
-O resultado consolidado varia de **-100 a +100**, definindo o viés de mercado (Bullish/Bearish/Neutro) e desenhando automaticamente as zonas de entrada (Buy Zone), metas técnicas (Targets) baseadas em resistências e níveis de invalidação macro (Stop Loss).
+The consolidated result ranges from **-100 to +100**, defining the market bias (Bullish/Bearish/Neutral) and automatically outlining entry zones (Buy Zone), technical targets (Targets) based on resistances, and macro invalidation levels (Stop Loss).
 
 ---
 
-## 📁 Estrutura de Arquivos
+## 📖 Detailed Documentation of the API, Modules, and Functions
+
+The ecosystem of the **SaaS Financial Indicator** is structured in a modular fashion and is based on modern frontend software engineering concepts. Below is the description of each feature, module, constants, events, and function signatures of the project.
+
+---
+
+### 1. Data Aggregation Module (`src/aggregator.js`)
+Located in [src/aggregator.js](src/aggregator.js), this module manages communication with the public Binance API and the grouping of historical candles into custom timeframes.
+
+#### Available Functions:
+*   #### `fetchBinanceKlines(symbol, interval, limit)`
+    *   **Description**: Performs an HTTP request (`fetch`) to the public Binance REST API (`/api/v3/klines`) to fetch historical candlestick data.
+    *   **Signature**: `async function fetchBinanceKlines(symbol, interval, limit = 500)`
+    *   **Parameters**:
+        *   `symbol` (`string`): Short asset symbol (`BTC`, `ETH`, or `SOL`). Internally mapped to the corresponding USDT pair (`BTCUSDT`, `ETHUSDT`, or `SOLUSDT`).
+        *   `interval` (`string`): Native candle interval supported by Binance (e.g., `'1d'`, `'1w'`, `'1M'`).
+        *   `limit` (`number`): Maximum number of candles to be returned (default `500`).
+    *   **Return**: `Promise<Array<Object>>` — Array of candle objects formatted for TradingView Lightweight Charts:
+        ```javascript
+        {
+          time: Number,  // Timestamp in seconds (UNIX Epoch)
+          open: Number,  // Opening price
+          high: Number,  // Maximum price reached
+          low: Number,   // Minimum price reached
+          close: Number, // Closing price
+          volume: Number // Traded volume
+        }
+        ```
+
+*   #### `aggregateCandles(candles1d, days)`
+    *   **Description**: Groups daily candle data (`1d`) into custom higher time frame (HTF) intervals.
+    *   **Signature**: `function aggregateCandles(candles1d, days)`
+    *   **Parameters**:
+        *   `candles1d` (`Array<Object>`): Array of daily candles obtained previously.
+        *   `days` (`number`): Number of days to consolidate into each aggregated candle (e.g., `3` for 3-day candles, `14` for 2-week candles).
+    *   **Return**: `Array<Object>` — Array of aggregated candles, where each candle has:
+        *   `open`: Opening price of the first daily candle of the group.
+        *   `close`: Closing price of the last daily candle of the group.
+        *   `high`: Maximum price among all daily candles in the group.
+        *   `low`: Minimum price among all daily candles in the group.
+        *   `volume`: Sum of the volume of all daily candles in the group.
+        *   `time`: The timestamp (seconds) of the first daily candle in the group.
+
+*   #### `getCandleData(symbol, timeframe)`
+    *   **Description**: High-level function that dynamically decides whether to make a direct request for native Binance timeframes or fetch daily candles and aggregate them on demand.
+    *   **Signature**: `async function getCandleData(symbol, timeframe)`
+    *   **Parameters**:
+        *   `symbol` (`string`): The analyzed asset (`BTC`, `ETH`, or `SOL`).
+        *   `timeframe` (`string`): The desired timeframe (`3d`, `1w`, `2w`, `1M`).
+    *   **Return**: `Promise<Array<Object>>` — List of candles ready for consumption and chart rendering.
+
+---
+
+### 2. Logic and Technical Indicators Module (`src/indicators.js`)
+Located in [src/indicators.js](src/indicators.js), contains the mathematical algorithms for technical indicators, candle pattern detection, and the statistical prediction engine.
+
+#### Available Functions:
+*   #### `calculateSMA(data, period)`
+    *   **Description**: Simple Moving Average (SMA).
+    *   **Signature**: `function calculateSMA(data, period)`
+    *   **Parameters**:
+        *   `data` (`Array<number>`): Base numeric data (closing prices).
+        *   `period` (`number`): The moving average window size.
+    *   **Return**: `Array<number>` — Array of the same size as input, containing the SMA values or `NaN` for indices prior to the required period.
+
+*   #### `calculateEMA(data, period)`
+    *   **Description**: Exponential Moving Average (EMA).
+    *   **Signature**: `function calculateEMA(data, period)`
+    *   **Parameters**:
+        *   `data` (`Array<number>`): Price numeric data.
+        *   `period` (`number`): Exponential average period.
+    *   **Return**: `Array<number>` — Exponential average values calculated recursively using the smoothing multiplier $k = 2 / (period + 1)$ and initialized with the SMA of the first `period` elements.
+
+*   #### `calculateRSI(closes, period)`
+    *   **Description**: Relative Strength Index (RSI) with J. Welles Wilder's classical smoothing.
+    *   **Signature**: `function calculateRSI(closes, period = 14)`
+    *   **Parameters**:
+        *   `closes` (`Array<number>`): Closing prices of candles.
+        *   `period` (`number`): Smoothing period (default `14`).
+    *   **Return**: `Array<number>` — List of RSI values fluctuating between `0` and `100` (`NaN` in initial positions).
+
+*   #### `calculateStochRSI(closes, rsiPeriod, stochPeriod, kSmooth, dSmooth)`
+    *   **Description**: Stochastic RSI (%K and %D), a momentum indicator that measures the position of the current RSI relative to its high and low values over a defined period.
+    *   **Signature**: `function calculateStochRSI(closes, rsiPeriod = 14, stochPeriod = 14, kSmooth = 3, dSmooth = 3)`
+    *   **Parameters**:
+        *   `closes` (`Array<number>`): Closing prices of candles.
+        *   `rsiPeriod`/`stochPeriod` (`number`): Period of the internal RSI and the stochastic window.
+        *   `kSmooth`/`dSmooth` (`number`): Simple smoothing factors for the `%K` and `%D` lines.
+    *   **Return**: `{ k: Array<number>, d: Array<number>, rsi: Array<number> }` — Structure containing both Stochastic RSI lines and the base RSI.
+
+*   #### `detectDivergences(prices, stochRsiK, windowSize)`
+    *   **Description**: Identifies regular bullish or bearish divergences in the Stochastic RSI %K line relative to local price pivots (tops/bottoms).
+    *   **Signature**: `function detectDivergences(prices, stochRsiK, windowSize = 35)`
+    *   **Logic**: Finds local price reversal pivots (using 2 margin candles on each side) and validates whether the indicator is showing opposing movements in overbought/oversold zones.
+    *   **Return**: `{ type: 'BULLISH'|'BEARISH'|'NONE', p1Index: number, p2Index: number }`
+
+*   #### `detectFVGs(candles)`
+    *   **Description**: Locates liquidity imbalances known as Fair Value Gaps (FVG) in the price chart and checks whether they have been mitigated (filled) by future movements.
+    *   **Signature**: `function detectFVGs(candles)`
+    *   **Logic**: Identifies inefficiencies when Candle 3 Low > Candle 1 High (Bullish FVG) or Candle 3 High < Candle 1 Low (Bearish FVG). The FVG is marked as mitigated if subsequent candle prices cross the gap boundaries.
+    *   **Return**: `Array<Object>` containing active (unmitigated) FVGs in the format:
+        ```javascript
+        {
+          id: String,
+          type: 'BULLISH' | 'BEARISH',
+          topPrice: Number,
+          bottomPrice: Number,
+          startIndex: Number,
+          isMitigated: Boolean
+        }
+        ```
+
+*   #### `detectSupportResistance(candles)`
+    *   **Description**: Static support and resistance identification algorithm based on pivot clustering and retest (touch) counts.
+    *   **Signature**: `function detectSupportResistance(candles)`
+    *   **Logic**:
+        1. Finds local pivots using a 4-candle window on each side.
+        2. Counts historical retests (touches within a 1.2% tolerance of the pivot price).
+        3. Consolidates levels that are very close (difference under 2%), prioritizing the level with more touches.
+        4. Dynamically reclassifies levels below the current spot price as **Supports** and above the current spot price as **Resistances** (Role Reversal Principle).
+    *   **Return**: `{ supports: Array<number>, resistances: Array<number> }` — Limited to the 3 closest levels of each.
+
+*   #### `runPredictionEngine(currentPrice, indicators, fvgs, sr, onchain, timeframe)`
+    *   **Description**: High-frequency statistical confluence engine that weights and calculates the Multidimensional Confluence Score (SCM) of the asset for the next 60 days.
+    *   **Signature**: `function runPredictionEngine(currentPrice, indicators, fvgs, sr, onchain, timeframe = '1w')`
+    *   **Score Weights**:
+        *   Price relative to EMA 21: $+20$ (if above) or $-20$ (if below).
+        *   Moving average alignment (9 > 21 > 52): $+20$ (bullish) or $-20$ (bearish).
+        *   Active Stoch RSI divergence: $+10$ (bullish) or $-10$ (bearish).
+        *   RSI in Oversold/Overbought zone: $+10$ (oversold) or $-10$ (overbought).
+        *   Price touching active Bullish/Bearish FVG: $+10$ (bullish gap) or $-10$ (bearish gap).
+        *   Price in static Support/Resistance zone (2% tolerance): $+10$ (support) or $-10$ (resistance).
+        *   Price vs Short-Term Realized Price (STH-RP): $+10$ (if above) or $-10$ (if below).
+        *   Extreme MVRV Z-Score (<0.2 or >3.0): $+10$ (undervalued) or $-10$ (overvalued).
+    *   **Return**: `{ score: number, bias: 'BULLISH'|'BEARISH'|'NEUTRAL', details: Array<Object> }` — The final score is normalized between `-100` and `+100`.
+
+---
+
+### 3. Main Frontend Controller (`app.js`)
+Located in [app.js](app.js), this file is the central controller of the client application. It initializes visual interfaces, manages application state, and integrates raw data with TradingView charts.
+
+#### Global State Variables:
+*   `currentAsset` (`string`): Currently selected asset (`'BTC'`, `'ETH'`, `'SOL'`).
+*   `currentTimeframe` (`string`): Active timeframe (`'3d'`, `'1w'`, `'2w'`, `'1M'`).
+*   `priceChart`, `rsiChart`, `stochChart`: Main chart instances from the TradingView Lightweight Charts library.
+*   `candlestickSeries`, `ema9Series`, `ema21Series`, `ema52Series`, `sma100Series`, `sma200Series`, `rsiSeries`, `stochKSeries`, `stochDSeries`: Data objects linked to charts for drawing series.
+*   `activePriceLines` (`Array`): References to currently plotted support and resistance lines.
+
+#### Life Cycle and Rendering Functions:
+*   #### `getSimulatedOnChainData(asset, price)`
+    *   **Description**: Simulates on-chain data in runtime proportionally to the real spot price, simulating fundamental data feeds (Rainbow band, MVRV Z-Score, and realized costs LTH-RP and STH-RP).
+    *   **Signature**: `function getSimulatedOnChainData(asset, price)`
+
+*   #### `initCharts()`
+    *   **Description**: Initializes TradingView chart instances in HTML containers and synchronizes their time scales bidirectionally (zoom and horizontal scroll on one applies to the others). Also registers `ResizeObserver` for smart responsive behavior.
+    *   **Signature**: `function initCharts()`
+
+*   #### `refreshDashboard()`
+    *   **Description**: Cyclic entry point executed on initialization and interface input changes.
+    *   **Signature**: `async function refreshDashboard()`
+    *   **Internal Flow**:
+        1. Updates text badges and titles in the UI.
+        2. Obtains market candles by calling `getCandleData`.
+        3. Calculates basic technical indicators (EMAs, SMAs, StochRSI, FVGs, S/R).
+        4. Updates chart series data and triggers automatic scroll animation to the right edge.
+        5. Draws static Support and Resistance lines if the toggle is checked.
+        6. Gathers simulated on-chain data.
+        7. Executes the `runPredictionEngine`.
+        8. Triggers the prediction panel update via `updatePredictionUI`.
+
+*   #### `updateIndicatorVisibility(ema9, ema21, ema52, sma100, sma200)`
+    *   **Description**: Maps moving average series on the price chart, showing or clearing data based on checked checkboxes in the UI.
+    *   **Signature**: `function updateIndicatorVisibility(ema9, ema21, ema52, sma100, sma200)`
+
+*   #### `updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels, lastEma21)`
+    *   **Description**: Updates all text elements and graphics of the investment thesis and expanded on-chain panel.
+    *   **Signature**: `function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels, lastEma21)`
+    *   **Logic**:
+        1. Renders the score and updates the progress SVG circle (`#score-progress`), changing the stroke color.
+        2. Formats the macro thesis in clear language based on calculated data coherent with the timeframe.
+        3. Defines action points (Buy Zone, Targets, and Stop Loss), using the actual calculated EMA 21 value for the bearish stop.
+        4. Populates the detailed confluence table.
+        5. Updates the Rainbow Chart status, activating corresponding visual segments and the MVRV Z-Score progress bar.
+
+*   #### `setupEventListeners()`
+    *   **Description**: Configures click and change listeners on main Navbar tabs, sidebar asset and timeframe buttons, indicator checkboxes, and integrated documentation tabs.
+    *   **Signature**: `function setupEventListeners()`
+
+---
+
+## 📁 File Structure
 
 ```
 saas-financial-indicator/
-├── docs/                        # Detalhamento teórico e passo a passo de cada módulo
+├── docs/                        # Theoretical detailing and step-by-step guides for each module
 │   ├── 1_graficos_e_timeframes.md
 │   ├── 2_medias_moveis_e_indicadores.md
 │   ├── 3_deteccao_divergencias.md
 │   ├── 4_fvg_suporte_resistencia.md
 │   ├── 5_confluencia_onchain.md
 │   └── 6_estrategia_predicao.md
-├── src/                         # Módulos de lógica puras (ESM)
-│   ├── aggregator.js            # Consumo da API da Binance e agregação de velas (3d, 2w)
-│   └── indicators.js            # Cálculos de SMA, EMA, RSI, StochRSI, Divergências, FVGs e S/R
-├── tests/                       # Scripts de teste automatizados em Node.js
-│   ├── test_aggregator.js       # Teste da busca e agrupamento de velas
-│   └── test_indicators.js       # Teste dos indicadores e motor preditivo
-├── index.html                   # Landing Page de Documentação e Dashboard Interativo
-├── style.css                    # Estilização moderna e contemporânea (Dark Theme Blue/Gray)
-├── app.js                       # Controlador frontend que gerencia a UI e os gráficos TradingView
-├── Dockerfile                   # Dockerfile contendo a imagem do Nginx
-├── docker-compose.yml           # Arquivo do Docker Compose para orquestração local rápida
-├── plano_projeto.md             # Plano de arquitetura original
-└── README.md                    # Este arquivo de orientações
+├── src/                         # Pure logic modules (ESM)
+│   ├── aggregator.js            # Binance API data fetcher and candle aggregator (3d, 2w)
+│   └── indicators.js            # SMA, EMA, RSI, StochRSI, Divergences, FVGs, and S/R calculations
+├── tests/                       # Automated test scripts in Node.js
+│   ├── test_aggregator.js       # Test for candle fetching and grouping
+│   └── test_indicators.js       # Test for indicators and prediction engine
+├── index.html                   # Documentation Landing Page & Interactive Dashboard
+├── style.css                    # Modern and contemporary styling (Dark Theme Blue/Gray)
+├── app.js                       # Frontend controller managing UI and TradingView charts
+├── Dockerfile                   # Dockerfile containing the Nginx image
+├── docker-compose.yml           # Docker Compose file for quick local orchestration
+├── plano_projeto.md             # Original architecture plan
+└── README.md                    # This guidance file
 ```
 
 ---
 
-## 🛠️ Instalação e Configuração Local
+## 🛠️ Local Installation and Setup
 
-Como a aplicação é estruturada usando módulos ES6 nativos no navegador (`import`/`export`), abrir o `index.html` diretamente por clique duplo (`file://`) causará erro de CORS. É necessário rodar o projeto sob um servidor HTTP.
+Since the application is structured using native ES6 modules in the browser (`import`/`export`), opening `index.html` directly via double-click (`file://`) will trigger CORS errors. It is necessary to run the project under an HTTP server.
 
-### Pré-requisitos
-*   **Node.js** instalado (Recomendado) ou **Python**.
+### Prerequisites
+*   **Node.js** installed (Recommended) or **Python**.
 
-### Passo a Passo
-1.  Clone este repositório para a sua máquina local:
+### Step-by-Step
+1.  Clone this repository to your local machine:
     ```bash
-    git clone <url-do-repositorio>
+    git clone <repository-url>
     cd saas-financial-indicator
     ```
-2.  Inicie o servidor local:
-    *   **Usando Node.js (via npx)**:
+2.  Start a local server:
+    *   **Using Node.js (via npx)**:
         ```bash
         npx http-server -p 9080
         ```
-    *   **Usando Python**:
+    *   **Using Python**:
         ```bash
         python -m http.server 9080
         ```
-3.  Acesse no seu navegador: **`http://localhost:9080`**
+3.  Access in your browser: **`http://localhost:9080`**
 
-### Executando Testes Unitários
-Para validar a precisão dos cálculos matemáticos de indicadores e o motor de agregação da API da Binance, execute os scripts de teste via terminal:
+### Running Unit Tests
+To validate the precision of the mathematical calculations of indicators and the candle aggregation engine from the Binance API, run the test scripts via the terminal:
 ```bash
-# Testar a integração e agregação de velas da Binance
+# Test the Binance candle integration and aggregation
 node tests/test_aggregator.js
 
-# Testar o motor de cálculo dos indicadores técnicos e previsões SCM
+# Test the technical indicators and SCM prediction calculations
 node tests/test_indicators.js
 ```
 
 ---
 
-## 🐳 Dockerização no Servidor Local
+## 🐳 Dockerization on Local Server
 
-Dockerizar o projeto permite que você execute a aplicação de forma isolada, leve e sem necessidade de ter Node.js ou Python instalados diretamente na máquina servidora.
+Dockerizing the project allows you to run the application in an isolated, lightweight manner, without needing to install Node.js or Python directly on the hosting machine.
 
-### Método 1: Usando o Docker Compose (Recomendado)
-Para rodar de forma simples e rápida com uma única instrução:
+### Method 1: Using Docker Compose (Recommended)
+To run simply and quickly with a single instruction:
 ```bash
-# Sobe o container em segundo plano (background) na porta 9080
+# Starts the container in the background on port 9080
 docker compose up -d
 ```
-Para parar o container:
+To stop the container:
 ```bash
 docker compose down
 ```
 
-### Método 2: Docker CLI Manual
-Se preferir compilar e rodar a imagem manualmente:
-1.  **Construir a imagem Docker**:
+### Method 2: Manual Docker CLI
+If you prefer to compile and run the image manually:
+1.  **Build the Docker image**:
     ```bash
     docker build -t saas-financial-indicator .
     ```
-2.  **Executar o container**:
+2.  **Run the container**:
     ```bash
     docker run -d -p 9080:80 --name saas-financial-indicator saas-financial-indicator
     ```
-3.  **Verificar logs**:
+3.  **Check logs**:
     ```bash
     docker logs saas-financial-indicator
     ```
 
-A aplicação estará disponível em `http://localhost:9080` rodando sob o servidor Nginx embarcado no container.
+The application will be available at `http://localhost:9080` running under the Nginx server embedded in the container.
 
 ---
 
-## 🌐 Disponibilização para a Internet (Deploy)
+## 🌐 Deployment to the Internet
 
-Como o projeto é **100% estático (Frontend Pure HTML/CSS/JS)**, existem diversas maneiras eficientes de disponibilizá-lo para o mundo:
+Since the project is **100% static (Pure Frontend HTML/CSS/JS)**, there are several efficient ways to make it publicly available:
 
-### Opção A: Exposição Segura de Servidor Local (Túneis)
-Se você está rodando o servidor em uma máquina física local (ou Raspberry Pi) e deseja acessá-lo externamente sem expor portas no seu roteador (sem Port Forwarding):
+### Option A: Secure Local Server Exposure (Tunnels)
+If you are running the server on a local physical machine (or Raspberry Pi) and want to access it externally without exposing ports on your router (no Port Forwarding):
 
-1.  **Cloudflare Tunnels (Recomendado & Gratuito)**:
-    *   Instale o `cloudflared` em sua máquina.
-    *   Autentique e crie o túnel:
+1.  **Cloudflare Tunnels (Recommended & Free)**:
+    *   Install `cloudflared` on your machine.
+    *   Authenticate and create the tunnel:
         ```bash
         cloudflared tunnel login
-        cloudflared tunnel create meu-saas-tunnel
+        cloudflared tunnel create my-saas-tunnel
         ```
-    *   Associe a um subdomínio de sua propriedade:
+    *   Associate it with a subdomain you own:
         ```bash
-        cloudflared tunnel route dns meu-saas-tunnel saas.meudominio.com
+        cloudflared tunnel route dns my-saas-tunnel saas.mydomain.com
         ```
-    *   Inicie o túnel apontando para a porta local do projeto (seja via Docker ou Local Host):
+    *   Start the tunnel pointing to the project's local port (either via Docker or Local Host):
         ```bash
-        cloudflared tunnel run --url http://localhost:9080 meu-saas-tunnel
+        cloudflared tunnel run --url http://localhost:9080 my-saas-tunnel
         ```
-        *A Cloudflare fornecerá HTTPS/SSL automático gratuitamente.*
+        *Cloudflare will provide free automatic HTTPS/SSL.*
 
-2.  **Ngrok (Rápido para Testes)**:
-    *   Instale o ngrok e execute:
+2.  **Ngrok (Fast for Testing)**:
+    *   Install ngrok and execute:
         ```bash
         ngrok http 9080
         ```
-    *   O terminal fornecerá uma URL pública temporária (ex: `https://abcd-123.ngrok-free.app`).
+    *   The terminal will provide a temporary public URL (e.g., `https://abcd-123.ngrok-free.app`).
 
 ---
 
-### Opção B: Hospedagem Estática em Nuvem (Altamente Recomendado)
-Por não possuir banco de dados ou backend dedicado (consome APIs públicas diretamente do navegador), o projeto é um candidato perfeito para plataformas de hospedagem estática global (CDNs). É a opção mais rápida e barata (geralmente grátis).
+### Option B: Cloud Static Hosting (Highly Recommended)
+Because it has no database or dedicated backend (it consumes public APIs directly from the browser), the project is a perfect candidate for global static hosting platforms (CDNs). It is the fastest and cheapest option (usually free).
 
-1.  **Vercel / Netlify**:
-    *   Crie uma conta gratuita nas plataformas.
-    *   Conecte o seu repositório Git (GitHub, GitLab).
-    *   Selecione o diretório do projeto.
-    *   Configure as opções de build como vazias (pois o projeto usa HTML puro).
-    *   Clique em **Deploy**. A plataforma fornecerá um domínio gratuito com SSL automático.
+1.  **Vercel (Recommended)**:
+    See the detailed step-by-step instructions in the section: [⚡ Free Deployment on Vercel](#-free-deployment-on-vercel).
+2.  **Netlify**:
+    *   Create a free account on Netlify.
+    *   Connect your Git repository (GitHub, GitLab).
+    *   Select the project directory, keeping build commands and output folders empty.
+    *   Click **Deploy site** to put the project online.
 
-2.  **GitHub Pages**:
-    *   No repositório do seu projeto no GitHub, acesse **Settings** > **Pages**.
-    *   Selecione a branch `main` e a pasta raiz (`/`) como fonte.
-    *   Salve. Seu site estará disponível em `https://seu-usuario.github.io/nome-do-repositorio/`.
+3.  **GitHub Pages**:
+    *   In your GitHub repository, go to **Settings** > **Pages**.
+    *   Select the `main` branch and the root folder (`/`) as the source.
+    *   Save. Your site will be available at `https://your-username.github.io/repository-name/`.
+
+---
+
+## ⚡ Free Deployment on Vercel
+
+Since the project is static and consumes public APIs directly in the browser, deploying to [Vercel](https://vercel.com) is 100% free and takes less than 2 minutes.
+
+### Option 1: Via Vercel Dashboard (GitHub/GitLab Integration)
+
+1.  Go to [Vercel](https://vercel.com) and create a free account (Hobby plan).
+2.  In the main dashboard, click **Add New** > **Project**.
+3.  Connect and authorize your **GitHub**, **GitLab**, or **Bitbucket** account.
+4.  Select the `saas-financial-indicator` repository and click **Import**.
+5.  In the project settings:
+    *   **Framework Preset**: Select `Other`.
+    *   **Root Directory**: Keep `./` (root folder).
+    *   **Build and Development Settings**: Do not change anything (leave blank), since the project uses native HTML, CSS, and JS.
+6.  Click the **Deploy** button. The compilation process will take only a few seconds, and your site will be live with a secure address (e.g., `https://your-project.vercel.app`).
+
+### Option 2: Via Vercel CLI (Without pushing to Git)
+
+If you want to deploy directly from your local terminal:
+
+1.  Install the Vercel tool globally on your system via Node Package Manager:
+    ```bash
+    npm install -g vercel
+    ```
+2.  Log into the CLI (this will open a browser window for authentication):
+    ```bash
+    vercel login
+    ```
+3.  Navigate to the project root folder and run the initial setup command:
+    ```bash
+    vercel
+    ```
+4.  Answer the questions displayed in the terminal to link the project (you can press `Enter` to accept all recommended default answers).
+5.  To generate the final production URL of the project, run the command:
+    ```bash
+    vercel --prod
+    ```
+
+Vercel will automatically generate an SSL security certificate and a stable domain for free.

@@ -9,11 +9,11 @@ import {
   detectDivergences
 } from './src/indicators.js';
 
-// Estado global do App
+// Global App State
 let currentAsset = 'BTC';
 let currentTimeframe = '1w';
 
-// Referências de Gráficos e Séries
+// Chart and Series References
 let priceChart = null;
 let rsiChart = null;
 let stochChart = null;
@@ -28,30 +28,30 @@ let stochKSeries = null;
 let stochDSeries = null;
 let activePriceLines = [];
 
-// Cores dos Indicadores
+// Indicator Colors
 const COLORS = {
-  ema9: '#3b82f6',   // Azul
-  ema21: '#f59e0b',  // Laranja
-  ema52: '#10b981',  // Verde
-  sma100: '#8b5cf6', // Roxo
-  sma200: '#ef4444'  // Vermelho
+  ema9: '#3b82f6',   // Blue
+  ema21: '#f59e0b',  // Orange
+  ema52: '#10b981',  // Green
+  sma100: '#8b5cf6', // Purple
+  sma200: '#ef4444'  // Red
 };
 
-// Dados On-Chain Simulados de Alta Fidelidade (com base no preço atual)
+// High Fidelity Simulated On-Chain Data (based on current price)
 function getSimulatedOnChainData(asset, price) {
   if (asset === 'BTC') {
     return {
       sthRp: price * 0.88,
       lthRp: price * 0.58,
       mvrvZscore: 1.45,
-      rainbowBand: 'Acumular'
+      rainbowBand: 'Accumulate'
     };
   } else if (asset === 'ETH') {
     return {
       sthRp: price * 0.84,
       lthRp: price * 0.52,
       mvrvZscore: 1.15,
-      rainbowBand: 'Ainda Barato'
+      rainbowBand: 'Still Cheap'
     };
   } else { // SOL
     return {
@@ -64,7 +64,7 @@ function getSimulatedOnChainData(asset, price) {
 }
 
 /**
- * Inicializa os gráficos da TradingView.
+ * Initializes TradingView charts.
  */
 function initCharts() {
   const priceContainer = document.getElementById('price-chart-container');
@@ -73,7 +73,7 @@ function initCharts() {
 
   if (!priceContainer || !rsiContainer || !stochContainer) return;
 
-  // Limpar containers caso já existam gráficos
+  // Clear containers if charts already exist
   priceContainer.innerHTML = '';
   rsiContainer.innerHTML = '';
   stochContainer.innerHTML = '';
@@ -108,7 +108,7 @@ function initCharts() {
     }
   };
 
-  // 1. Criar Gráfico Principal de Preço
+  // 1. Create Main Price Chart
   priceChart = LightweightCharts.createChart(priceContainer, {
     ...chartOptions,
     width: priceContainer.clientWidth,
@@ -121,19 +121,19 @@ function initCharts() {
     borderVisible: false,
     wickUpColor: '#10b981',
     wickDownColor: '#ef4444',
-    priceLineColor: '#f59e0b', // Laranja para o preço atual
+    priceLineColor: '#f59e0b', // Amber for current price
     priceLineVisible: true,
     lastValueVisible: true,
   });
 
-  // Linhas das médias móveis
+  // Moving averages lines
   ema9Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.ema9, lineWidth: 1.5, crosshairMarkerVisible: false, lastValueVisible: true, priceLineVisible: false });
   ema21Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.ema21, lineWidth: 1.5, crosshairMarkerVisible: false, lastValueVisible: true, priceLineVisible: false });
   ema52Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.ema52, lineWidth: 1.5, crosshairMarkerVisible: false, lastValueVisible: true, priceLineVisible: false });
   sma100Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.sma100, lineWidth: 2, crosshairMarkerVisible: false, lastValueVisible: true, priceLineVisible: false });
   sma200Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.sma200, lineWidth: 2.5, crosshairMarkerVisible: false, lastValueVisible: true, priceLineVisible: false });
 
-  // 2. Criar Gráfico de RSI
+  // 2. Create RSI Chart
   rsiChart = LightweightCharts.createChart(rsiContainer, {
     ...chartOptions,
     width: rsiContainer.clientWidth,
@@ -144,7 +144,7 @@ function initCharts() {
   rsiSeries.createPriceLine({ price: 30, color: 'rgba(148, 163, 184, 0.3)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true });
   rsiSeries.createPriceLine({ price: 70, color: 'rgba(148, 163, 184, 0.3)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true });
 
-  // 3. Criar Gráfico Secundário (Stochastic RSI)
+  // 3. Create Secondary Chart (Stochastic RSI)
   stochChart = LightweightCharts.createChart(stochContainer, {
     ...chartOptions,
     width: stochContainer.clientWidth,
@@ -154,11 +154,11 @@ function initCharts() {
   stochKSeries = stochChart.addSeries(LightweightCharts.LineSeries, { color: '#3b82f6', lineWidth: 1.5, title: '%K' });
   stochDSeries = stochChart.addSeries(LightweightCharts.LineSeries, { color: '#f59e0b', lineWidth: 1.5, title: '%D' });
 
-  // Adicionar limites do Stochastic RSI (20 e 80)
+  // Add Stochastic RSI limits (20 and 80)
   stochKSeries.createPriceLine({ price: 20, color: 'rgba(148, 163, 184, 0.3)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true });
   stochKSeries.createPriceLine({ price: 80, color: 'rgba(148, 163, 184, 0.3)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true });
 
-  // Sincronizar escalas de tempo dos três gráficos de forma bidirecional (Zoom & Scroll)
+  // Sync time scales of the three charts bidirectionally (Zoom & Scroll)
   let isReflecting = false;
   const syncCharts = (sourceChart, targets) => {
     sourceChart.timeScale().subscribeVisibleLogicalRangeChange((logicalRange) => {
@@ -177,7 +177,7 @@ function initCharts() {
   syncCharts(rsiChart, [priceChart, stochChart]);
   syncCharts(stochChart, [priceChart, rsiChart]);
 
-  // Ajustar responsividade
+  // Adjust responsiveness
   const resizeObserver = new ResizeObserver(() => {
     if (priceChart && rsiChart && stochChart) {
       priceChart.resize(priceContainer.clientWidth, priceContainer.clientHeight);
@@ -189,7 +189,7 @@ function initCharts() {
 }
 
 /**
- * Recarrega e renderiza dados nos gráficos e painéis com base nas seleções.
+ * Reloads and renders data on charts and panels based on selections.
  */
 async function refreshDashboard() {
   const chartsWrapper = document.querySelector('.charts-wrapper');
@@ -202,11 +202,11 @@ async function refreshDashboard() {
     document.getElementById('current-asset-title').innerText = `${currentAsset === 'BTC' ? 'Bitcoin' : currentAsset === 'ETH' ? 'Ethereum' : 'Solana'} (${currentAsset}/USD)`;
     document.getElementById('current-timeframe-badge').innerText = currentTimeframe;
 
-    // 1. Obter velas de mercado
+    // 1. Get market candles
     const candles = await getCandleData(currentAsset, currentTimeframe);
     if (!candles || candles.length === 0) return;
 
-    // Forçar redimensionamento baseado no tamanho do container real para evitar largura 0px
+    // Force resize based on real container size to avoid 0px width
     const priceContainer = document.getElementById('price-chart-container');
     const rsiContainer = document.getElementById('rsi-chart-container');
     const stochContainer = document.getElementById('stoch-chart-container');
@@ -224,7 +224,7 @@ async function refreshDashboard() {
     const lastCandle = candles[candles.length - 1];
     const prevCandle = candles[candles.length - 2];
     
-    // Atualizar cabeçalho de Preço
+    // Update Price header
     const currentPrice = lastCandle.close;
     const priceChange = ((currentPrice - prevCandle.close) / prevCandle.close) * 100;
     
@@ -233,7 +233,7 @@ async function refreshDashboard() {
     changeBadge.innerText = `${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)}%`;
     changeBadge.className = `price-change-percent ${priceChange >= 0 ? 'bullish' : 'bearish'}`;
 
-    // 2. Calcular Indicadores Técnicos
+    // 2. Calculate Technical Indicators
     const ema9 = calculateEMA(closes, 9);
     const ema21 = calculateEMA(closes, 21);
     const ema52 = calculateEMA(closes, 52);
@@ -244,13 +244,13 @@ async function refreshDashboard() {
     const fvgs = detectFVGs(candles);
     const srLevels = detectSupportResistance(candles);
 
-    // 3. Alimentar as Séries do TradingView
+    // 3. Feed TradingView Series
     candlestickSeries.setData(candles);
     
-    // Plotar médias se marcadas no checkbox
+    // Plot averages if checked in the checkbox
     updateIndicatorVisibility(ema9, ema21, ema52, sma100, sma200);
 
-    // Mapear dados do RSI e Stochastic RSI de forma alinhada com pontos em branco (whitespace)
+    // Map RSI and Stochastic RSI data aligned with whitespace points
     const rsiData = [];
     const stochKData = [];
     const stochDData = [];
@@ -282,20 +282,20 @@ async function refreshDashboard() {
     stochKSeries.setData(stochKData);
     stochDSeries.setData(stochDData);
 
-    // Forçar rolagem das escalas de tempo para o canto direito (últimas velas visíveis)
+    // Force scroll of time scales to the right edge (last visible candles)
     setTimeout(() => {
       if (priceChart) priceChart.timeScale().scrollToPosition(0, false);
       if (rsiChart) rsiChart.timeScale().scrollToPosition(0, false);
       if (stochChart) stochChart.timeScale().scrollToPosition(0, false);
     }, 50);
 
-    // 4. Limpar e Plotar Linhas de Suporte/Resistência (S/R)
+    // 4. Clear and Plot Support/Resistance (S/R) Lines
     activePriceLines.forEach(line => candlestickSeries.removePriceLine(line));
     activePriceLines = [];
 
     const showSR = document.getElementById('toggle-sr').checked;
     if (showSR) {
-      // Adicionar Suportes (verde) e Resistências (vermelho) mais próximos
+      // Add closest Supports (green) and Resistances (red)
       srLevels.supports.forEach(level => {
         const line = candlestickSeries.createPriceLine({
           price: level,
@@ -321,22 +321,22 @@ async function refreshDashboard() {
       });
     }
 
-    // 5. Coleta e atualização de dados On-Chain
+    // 5. Collection and update of On-Chain data
     const onchain = getSimulatedOnChainData(currentAsset, currentPrice);
     
-    // Atualizar Sidebar On-Chain (Defensivo)
+    // Update On-Chain Sidebar (Defensive)
     const sidebarMvrv = document.getElementById('sidebar-mvrv-val');
     const sidebarRainbow = document.getElementById('sidebar-rainbow-val');
     const sidebarSth = document.getElementById('sidebar-sth-val');
 
     if (sidebarMvrv) {
-      sidebarMvrv.innerText = `${onchain.mvrvZscore.toFixed(2)} (${onchain.mvrvZscore < 0.5 ? 'Subvalorizado' : onchain.mvrvZscore > 2.0 ? 'Sobrevalorizado' : 'Neutro'})`;
+      sidebarMvrv.innerText = `${onchain.mvrvZscore.toFixed(2)} (${onchain.mvrvZscore < 0.5 ? 'Undervalued' : onchain.mvrvZscore > 2.0 ? 'Overvalued' : 'Neutral'})`;
       sidebarMvrv.className = `val ${onchain.mvrvZscore < 0.5 ? 'text-green' : onchain.mvrvZscore > 2.0 ? 'text-red' : 'text-blue'}`;
     }
     
     if (sidebarRainbow) {
       sidebarRainbow.innerText = onchain.rainbowBand;
-      sidebarRainbow.className = `val ${onchain.rainbowBand.includes('Acumular') || onchain.rainbowBand.includes('Barato') ? 'text-green' : 'text-blue'}`;
+      sidebarRainbow.className = `val ${onchain.rainbowBand.includes('Accumulate') || onchain.rainbowBand.includes('Cheap') ? 'text-green' : 'text-blue'}`;
     }
     
     if (sidebarSth) {
@@ -345,20 +345,21 @@ async function refreshDashboard() {
       sidebarSth.className = `val ${pctToSth >= 0 ? 'text-green' : 'text-red'}`;
     }
 
-    // 6. Rodar o Motor de Predição (SCM)
+    // 6. Run the Prediction Engine (SCM)
     const prediction = runPredictionEngine(
       currentPrice,
       { closes, ema9, ema21, ema52, sma100, sma200, rsi: stochRsi.rsi, stochK: stochRsi.k },
       fvgs,
       srLevels,
-      onchain
+      onchain,
+      currentTimeframe
     );
 
-    // Atualizar UI de Predição
-    updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels);
+    // Update Prediction UI
+    updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels, ema21[ema21.length - 1]);
 
   } catch (error) {
-    console.error("Erro ao atualizar o painel analítico:", error);
+    console.error("Error updating the analytical dashboard:", error);
   } finally {
     if (chartsWrapper) chartsWrapper.classList.remove('loading');
     if (predModule) predModule.classList.remove('loading');
@@ -366,7 +367,7 @@ async function refreshDashboard() {
 }
 
 /**
- * Atualiza o estado visual das linhas de médias móveis conforme as caixas de seleção.
+ * Updates the visual state of the moving average lines according to the checkboxes.
  */
 function updateIndicatorVisibility(ema9, ema21, ema52, sma100, sma200) {
   const mapData = (values, sourceCandles) => {
@@ -379,14 +380,14 @@ function updateIndicatorVisibility(ema9, ema21, ema52, sma100, sma200) {
     return data;
   };
 
-  // Buscar estado dos checkboxes
+  // Get checkboxes state
   const showEma9 = document.getElementById('toggle-ema9').checked;
   const showEma21 = document.getElementById('toggle-ema21').checked;
   const showEma52 = document.getElementById('toggle-ema52').checked;
   const showSma100 = document.getElementById('toggle-sma100').checked;
   const showSma200 = document.getElementById('toggle-sma200').checked;
 
-  // Coleta dados
+  // Collects data
   getCandleData(currentAsset, currentTimeframe).then(candles => {
     ema9Series.setData(showEma9 ? mapData(ema9, candles) : []);
     ema21Series.setData(showEma21 ? mapData(ema21, candles) : []);
@@ -397,65 +398,73 @@ function updateIndicatorVisibility(ema9, ema21, ema52, sma100, sma200) {
 }
 
 /**
- * Atualiza o painel inferior de Predição de 2 Meses.
+ * Updates the lower 2-Month Prediction panel.
  */
-function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels) {
-  // 1. Atualizar Score e Radial Progress Circle
+function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels, lastEma21) {
+  // 1. Update Score and Radial Progress Circle
   const scoreNum = prediction.score;
   const absScore = Math.abs(scoreNum);
   document.getElementById('pred-score-number').innerText = `${scoreNum >= 0 ? '+' : ''}${scoreNum}`;
   
-  // Atualizar barra de progresso radial
+  // Update radial progress bar
   const strokeOffset = 251.2 - (251.2 * absScore) / 100;
   const progressBar = document.getElementById('score-progress');
   progressBar.style.strokeDashoffset = strokeOffset;
   
-  // Mudar cor do círculo com base na pontuação
+  // Change circle color based on score
   if (scoreNum >= 40) {
-    progressBar.style.stroke = '#10b981'; // Verde
+    progressBar.style.stroke = '#10b981'; // Green
   } else if (scoreNum <= -40) {
-    progressBar.style.stroke = '#ef4444'; // Vermelho
+    progressBar.style.stroke = '#ef4444'; // Red
   } else {
-    progressBar.style.stroke = '#3b82f6'; // Azul
+    progressBar.style.stroke = '#3b82f6'; // Blue
   }
 
-  // 2. Atualizar o Badge de Viés
+  // 2. Update the Bias Badge
   const biasBadge = document.getElementById('pred-bias-badge');
   biasBadge.innerText = prediction.bias;
   biasBadge.className = `prediction-bias-badge ${prediction.bias.toLowerCase()}`;
 
-  // 3. Elaborar Tese e Zonas de Compra/Alvo
+  // 3. Elaborate Thesis and Buy/Target Zones
+  const timeframeLabels = {
+    '3d': '3 Days',
+    '1w': 'Weekly',
+    '2w': '2 Weeks',
+    '1M': 'Monthly'
+  };
+  const tfLabel = timeframeLabels[currentTimeframe] || currentTimeframe;
+
   let thesis = '';
   let buyZone = '';
   let targetZone = '';
   let stopZone = '';
 
   if (prediction.bias === 'BULLISH') {
-    thesis = `O motor SCM detecta forte confluência altista no ativo ${currentAsset}. A tendência macro de HTF está alinhada para cima, com o preço acima da EMA 21 Semanal e mantendo sustentação acima do STH-RP ($${Math.round(onchain.sthRp).toLocaleString()}). Recomenda-se aproveitar correções locais para acumulação em limites chave de suporte técnico.`;
-    buyZone = `$${Math.round(onchain.sthRp).toLocaleString()} (STH-RP) até $${Math.round(currentPrice * 0.95).toLocaleString()}`;
+    thesis = `The SCM engine detects strong bullish confluence on asset ${currentAsset} based on the ${tfLabel} timeframe. The macro HTF trend is aligned upward, with the price above the EMA 21 (${tfLabel}) and maintaining support above the STH-RP ($${Math.round(onchain.sthRp).toLocaleString()}). It is recommended to take advantage of local corrections for accumulation at key technical support limits.`;
+    buyZone = `$${Math.round(onchain.sthRp).toLocaleString()} (STH-RP) to $${Math.round(currentPrice * 0.95).toLocaleString()}`;
     
-    // Alvo: Primeira resistência acima do preço
+    // Target: First resistance above price
     const targets = srLevels.resistances.filter(r => r > currentPrice);
     targetZone = targets.length > 0 ? `$${Math.round(targets[0]).toLocaleString()}` : `$${Math.round(currentPrice * 1.25).toLocaleString()}`;
     
-    // Stop: LTH-RP ou abaixo
-    stopZone = `$${Math.round(onchain.lthRp).toLocaleString()} (Invalidação macro LTH-RP)`;
+    // Stop: LTH-RP or below
+    stopZone = `$${Math.round(onchain.lthRp).toLocaleString()} (Macro LTH-RP invalidation)`;
   } else if (prediction.bias === 'BEARISH') {
-    thesis = `O motor SCM aponta viés negativo expressivo para os próximos 2 meses no ativo ${currentAsset}. O preço rompeu suportes cruciais e está sendo negociado abaixo do STH-RP ($${Math.round(onchain.sthRp).toLocaleString()}), sinalizando exaustão institucional. Zonas de rebalanceamento Bearish (FVG) podem atuar como fortes resistências no curto prazo.`;
-    buyZone = `Ficar em caixa / Aguardar capitulação`;
+    thesis = `The SCM engine points to a significant negative bias for the next 2 months on asset ${currentAsset} based on the ${tfLabel} timeframe. The price broke crucial supports and is trading below the STH-RP ($${Math.round(onchain.sthRp).toLocaleString()}), signaling institutional exhaustion. Bearish rebalancing zones (FVGs) may act as strong resistances in the short term.`;
+    buyZone = `Stay in cash / Wait for capitulation`;
     
-    // Alvo de queda: Próximo suporte ou LTH-RP
+    // Downside target: Next support or LTH-RP
     const supports = srLevels.supports.filter(s => s < currentPrice);
-    targetZone = supports.length > 0 ? `$${Math.round(supports[supports.length - 1]).toLocaleString()} (Próximo suporte)` : `$${Math.round(onchain.lthRp).toLocaleString()}`;
+    targetZone = supports.length > 0 ? `$${Math.round(supports[supports.length - 1]).toLocaleString()} (Next support)` : `$${Math.round(onchain.lthRp).toLocaleString()}`;
     
-    // Stop: Invalidação acima da EMA 21 Semanal
-    const weeklyEma21 = currentPrice * 1.08; // Valor estimado para UI
-    stopZone = `$${Math.round(weeklyEma21).toLocaleString()} (Fechamento semanal acima da EMA 21)`;
+    // Stop: Invalidation above the EMA 21
+    const activeEma21 = lastEma21 && !isNaN(lastEma21) ? lastEma21 : currentPrice * 1.08;
+    stopZone = `$${Math.round(activeEma21).toLocaleString()} (Close above EMA 21 on the ${tfLabel.toLowerCase()} timeframe)`;
   } else {
-    thesis = `O mercado de ${currentAsset} encontra-se em consolidação/lateralidade no tempo gráfico de ${currentTimeframe}. O score do motor SCM está equilibrado. As médias móveis indicam acomodação e não há gatilhos de divergência fortes ativos no momento. Recomenda-se operação em canais e paciência estratégica.`;
-    buyZone = `Operar apenas nas extremidades de canais S/R`;
-    targetZone = `Resistências locais ($${Math.round(currentPrice * 1.05).toLocaleString()})`;
-    stopZone = `Rompimento do canal de consolidação`;
+    thesis = `The ${currentAsset} market is in consolidation/lateral movement on the ${tfLabel} timeframe. The SCM engine score is balanced. The moving averages indicate accommodation and there are no strong active divergence triggers at the moment. Channel trading and strategic patience are recommended.`;
+    buyZone = `Trade only at the S/R channel boundaries`;
+    targetZone = `Local resistances ($${Math.round(currentPrice * 1.05).toLocaleString()})`;
+    stopZone = `Break of the consolidation channel`;
   }
 
   document.getElementById('pred-thesis-text').innerText = thesis;
@@ -463,7 +472,7 @@ function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels) {
   document.getElementById('pred-target-zone').innerText = targetZone;
   document.getElementById('pred-stop-zone').innerText = stopZone;
 
-  // Atualizar valores do topo do Hero (para o ativo BTC)
+  // Update top Hero values (for the BTC asset)
   if (currentAsset === 'BTC') {
     document.getElementById('hero-score-val').innerText = `${scoreNum >= 0 ? '+' : ''}${scoreNum} / 100`;
     document.getElementById('hero-score-val').className = `stat-val ${prediction.bias === 'BULLISH' ? 'bullish' : prediction.bias === 'BEARISH' ? 'bearish' : 'text-blue'}`;
@@ -473,7 +482,7 @@ function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels) {
     heroBias.className = `status-${prediction.bias.toLowerCase()}`;
   }
 
-  // 4. Preencher tabela de fatores de confluência
+  // 4. Fill confluence factors table
   const tbody = document.querySelector('#scoring-table tbody');
   if (tbody) {
     tbody.innerHTML = '';
@@ -501,21 +510,21 @@ function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels) {
     });
   }
 
-  // 5. Atualizar Aba On-Chain Expandida
+  // 5. Update Expanded On-Chain Tab
   const rainbowText = document.getElementById('onchain-rainbow-band');
   if (rainbowText) rainbowText.innerText = onchain.rainbowBand;
 
-  // Atualizar segmento ativo do Rainbow Chart
+  // Update active segment of the Rainbow Chart
   let bandIndex = 4;
   const band = onchain.rainbowBand;
-  if (band.includes('Bolha Máxima') || band.includes('Venda')) bandIndex = 0;
-  else if (band.includes('Bolha') || band.includes('FOMO')) bandIndex = 1;
-  else if (band.includes('Bolha?')) bandIndex = 2;
+  if (band.includes('Maximum Bubble') || band.includes('Sell')) bandIndex = 0;
+  else if (band.includes('Bubble') || band.includes('FOMO')) bandIndex = 1;
+  else if (band.includes('Bubble?')) bandIndex = 2;
   else if (band.includes('HODL')) bandIndex = 3;
-  else if (band.includes('Ainda Barato')) bandIndex = 4;
-  else if (band.includes('Acumular')) bandIndex = 5;
-  else if (band.includes('Comprar')) bandIndex = 6;
-  else if (band.includes('Liquidação')) bandIndex = 7;
+  else if (band.includes('Still Cheap')) bandIndex = 4;
+  else if (band.includes('Accumulate')) bandIndex = 5;
+  else if (band.includes('Buy')) bandIndex = 6;
+  else if (band.includes('Fire Sale')) bandIndex = 7;
 
   const segments = document.querySelectorAll('.rainbow-segment');
   segments.forEach((s, idx) => {
@@ -526,7 +535,7 @@ function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels) {
     }
   });
 
-  // Atualizar MVRV Z-Score
+  // Update MVRV Z-Score
   const mvrvText = document.getElementById('onchain-mvrv-score');
   if (mvrvText) mvrvText.innerText = onchain.mvrvZscore.toFixed(2);
 
@@ -536,7 +545,7 @@ function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels) {
     mvrvFill.style.width = `${pct}%`;
   }
 
-  // Atualizar Realized Prices
+  // Update Realized Prices
   const sthText = document.getElementById('onchain-sth-rp');
   if (sthText) sthText.innerText = `$${Math.round(onchain.sthRp).toLocaleString()}`;
 
@@ -546,16 +555,16 @@ function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels) {
   const relationText = document.getElementById('onchain-realized-relation');
   if (relationText) {
     if (currentPrice > onchain.sthRp && onchain.sthRp > onchain.lthRp) {
-      relationText.innerText = "O preço está acima de ambos os custos de aquisição (STH-RP e LTH-RP), confirmando a estrutura saudável de alta.";
-      relationText.className = "realized-price-status"; // Verde/Bullish
+      relationText.innerText = "Price is above both acquisition costs (STH-RP and LTH-RP), confirming a healthy bullish structure.";
+      relationText.className = "realized-price-status"; // Green/Bullish
     } else if (currentPrice < onchain.sthRp && currentPrice > onchain.lthRp) {
-      relationText.innerText = "O preço perdeu o suporte de curto prazo (STH-RP), mas permanece acima do suporte de longo prazo (LTH-RP). Alerta de consolidação.";
-      relationText.className = "realized-price-status text-blue"; // Azul/Neutro
+      relationText.innerText = "Price has lost the short-term support (STH-RP) but remains above the long-term support (LTH-RP). Consolidation alert.";
+      relationText.className = "realized-price-status text-blue"; // Blue/Neutral
       relationText.style.backgroundColor = "rgba(59, 130, 246, 0.1)";
       relationText.style.borderColor = "rgba(59, 130, 246, 0.2)";
     } else {
-      relationText.innerText = "O preço está abaixo de ambos os custos (LTH-RP e STH-RP). Fase de capitulação histórica do mercado de baixa.";
-      relationText.className = "realized-price-status text-red"; // Vermelho/Bearish
+      relationText.innerText = "Price is below both costs (LTH-RP and STH-RP). Historical bear market capitulation phase.";
+      relationText.className = "realized-price-status text-red"; // Red/Bearish
       relationText.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
       relationText.style.borderColor = "rgba(239, 68, 68, 0.2)";
     }
@@ -563,10 +572,10 @@ function updatePredictionUI(prediction, currentPrice, onchain, fvgs, srLevels) {
 }
 
 /**
- * Configuração de Listeners da Interface.
+ * Interface Event Listeners Configuration.
  */
 function setupEventListeners() {
-  // Listeners dos Ativos (Sidebar)
+  // Asset Listeners (Sidebar)
   const assetButtons = document.querySelectorAll('#asset-selector .selector-btn');
   assetButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -577,7 +586,7 @@ function setupEventListeners() {
     });
   });
 
-  // Listeners dos Timeframes (Sidebar)
+  // Timeframe Listeners (Sidebar)
   const timeframeButtons = document.querySelectorAll('#timeframe-selector .selector-btn');
   timeframeButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -588,11 +597,11 @@ function setupEventListeners() {
     });
   });
 
-  // Checkboxes de visibilidade de médias
+  // Averages visibility checkboxes
   const checkboxes = ['toggle-ema9', 'toggle-ema21', 'toggle-ema52', 'toggle-sma100', 'toggle-sma200'];
   checkboxes.forEach(id => {
     document.getElementById(id).addEventListener('change', () => {
-      // Recalcular médias a partir das velas atuais
+      // Recalculate averages from current candles
       getCandleData(currentAsset, currentTimeframe).then(candles => {
         const closes = candles.map(c => c.close);
         const ema9 = calculateEMA(closes, 9);
@@ -605,7 +614,7 @@ function setupEventListeners() {
     });
   });
 
-  // Checkbox de visibilidade de S/R
+  // S/R visibility checkbox
   const toggleSR = document.getElementById('toggle-sr');
   if (toggleSR) {
     toggleSR.addEventListener('change', () => {
@@ -613,7 +622,7 @@ function setupEventListeners() {
     });
   }
 
-  // Tabs da Documentação Geral
+  // General Documentation Tabs
   const tabButtons = document.querySelectorAll('#docs-tabs .tab-btn');
   tabButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -627,7 +636,7 @@ function setupEventListeners() {
     });
   });
 
-  // Abas Principais (Navbar)
+  // Main Tabs (Navbar)
   const mainTabButtons = document.querySelectorAll('#main-tabs .tab-link');
   mainTabButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -641,7 +650,7 @@ function setupEventListeners() {
       const targetPanel = document.getElementById(`panel-${targetTab}`);
       if (targetPanel) targetPanel.classList.add('active');
 
-      // Se a aba for o dashboard, forçar redimensionamento dos gráficos para calcular o layout visível
+      // If the tab is the dashboard, force resize of the charts to calculate the visible layout
       if (targetTab === 'dashboard') {
         setTimeout(() => {
           const priceContainer = document.getElementById('price-chart-container');
@@ -665,7 +674,7 @@ function setupEventListeners() {
   });
 }
 
-// Inicializar tudo ao carregar a página
+// Initialize everything on page load
 window.addEventListener('DOMContentLoaded', () => {
   initCharts();
   setupEventListeners();

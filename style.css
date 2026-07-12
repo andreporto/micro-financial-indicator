@@ -351,6 +351,22 @@ a {
   font-size: 0.9rem;
   font-weight: 700;
 }
+.status-bearish {
+  color: var(--white);
+  background-color: var(--red-bearish);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.status-neutro, .status-neutral {
+  color: var(--white);
+  background-color: var(--border-color);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
 
 .small-chart-placeholder {
   display: flex;
@@ -723,7 +739,7 @@ a {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
-.prediction-bias-badge.neutro {
+.prediction-bias-badge.neutro, .prediction-bias-badge.neutral {
   background-color: var(--border-color);
 }
 
@@ -1027,7 +1043,7 @@ a {
 
 /* Loading Overlay para gráficos e predição */
 .charts-wrapper.loading::after, .prediction-module.loading::after {
-  content: "Carregando dados em tempo real...";
+  content: "Loading real-time data...";
   position: absolute;
   top: 0;
   left: 0;

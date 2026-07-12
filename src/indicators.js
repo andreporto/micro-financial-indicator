@@ -1,12 +1,12 @@
 /**
- * Módulo de indicadores técnicos, detecção de padrões e motor de predição.
+ * Technical indicators, pattern detection and prediction engine module.
  */
 
 /**
- * Calcula a Média Móvel Simples (SMA).
- * @param {Array<number>} data - Dados numéricos (geralmente fechamentos)
- * @param {number} period - Período da média
- * @returns {Array<number>} Array do mesmo tamanho do input, contendo valores ou NaN
+ * Calculates the Simple Moving Average (SMA).
+ * @param {Array<number>} data - Numeric data (usually closes)
+ * @param {number} period - Average period
+ * @returns {Array<number>} Array of the same size as input, containing values or NaN
  */
 export function calculateSMA(data, period) {
   const sma = [];
@@ -22,10 +22,10 @@ export function calculateSMA(data, period) {
 }
 
 /**
- * Calcula a Média Móvel Exponencial (EMA).
- * @param {Array<number>} data - Dados numéricos
- * @param {number} period - Período da média
- * @returns {Array<number>} Array contendo valores calculados ou NaN
+ * Calculates the Exponential Moving Average (EMA).
+ * @param {Array<number>} data - Numeric data
+ * @param {number} period - Average period
+ * @returns {Array<number>} Array containing calculated values or NaN
  */
 export function calculateEMA(data, period) {
   const ema = [];
@@ -36,7 +36,7 @@ export function calculateEMA(data, period) {
     if (i < period - 1) {
       ema.push(NaN);
     } else if (i === period - 1) {
-      // O valor inicial é a SMA correspondente
+      // The initial value is the corresponding SMA
       const sum = data.slice(0, period).reduce((a, b) => a + b, 0);
       prevEma = sum / period;
       ema.push(prevEma);
@@ -50,9 +50,9 @@ export function calculateEMA(data, period) {
 }
 
 /**
- * Calcula o Índice de Força Relativa (RSI) com suavização de Wilder.
- * @param {Array<number>} closes - Preços de fechamento
- * @param {number} period - Período (default: 14)
+ * Calculates the Relative Strength Index (RSI) with Wilder's smoothing.
+ * @param {Array<number>} closes - Closing prices
+ * @param {number} period - Period (default: 14)
  * @returns {Array<number>}
  */
 export function calculateRSI(closes, period = 14) {
@@ -61,7 +61,7 @@ export function calculateRSI(closes, period = 14) {
     return Array(closes.length).fill(NaN);
   }
 
-  // Diferenças de preço
+  // Price differences
   const gains = [];
   const losses = [];
   
@@ -71,20 +71,20 @@ export function calculateRSI(closes, period = 14) {
     losses.push(diff < 0 ? -diff : 0);
   }
 
-  // Primeiro ganho/perda médio (SMA)
+  // First average gain/loss (SMA)
   let avgGain = gains.slice(0, period).reduce((a, b) => a + b, 0) / period;
   let avgLoss = losses.slice(0, period).reduce((a, b) => a + b, 0) / period;
 
-  // Preencher NaNs iniciais
+  // Fill initial NaNs
   for (let i = 0; i < period; i++) {
     rsi.push(NaN);
   }
   
-  // Primeiro RSI válido
+  // First valid RSI
   let firstRS = avgLoss === 0 ? 100 : avgGain / avgLoss;
   rsi.push(100 - 100 / (1 + firstRS));
 
-  // Suavização de Wilder para o restante dos dados
+  // Wilder's smoothing for the remaining data
   for (let i = period; i < gains.length; i++) {
     avgGain = (avgGain * (period - 1) + gains[i]) / period;
     avgLoss = (avgLoss * (period - 1) + losses[i]) / period;
@@ -97,12 +97,12 @@ export function calculateRSI(closes, period = 14) {
 }
 
 /**
- * Calcula o Stochastic RSI (%K e %D).
- * @param {Array<number>} closes - Preços de fechamento
- * @param {number} rsiPeriod - Período do RSI (14)
- * @param {number} stochPeriod - Período do Estocástico (14)
- * @param {number} kSmooth - Suavização de %K (3)
- * @param {number} dSmooth - Suavização de %D (3)
+ * Calculates the Stochastic RSI (%K and %D).
+ * @param {Array<number>} closes - Closing prices
+ * @param {number} rsiPeriod - RSI Period (14)
+ * @param {number} stochPeriod - Stochastic Period (14)
+ * @param {number} kSmooth - %K Smoothing (3)
+ * @param {number} dSmooth - %D Smoothing (3)
  * @returns {{k: Array<number>, d: Array<number>}}
  */
 export function calculateStochRSI(closes, rsiPeriod = 14, stochPeriod = 14, kSmooth = 3, dSmooth = 3) {
@@ -122,37 +122,37 @@ export function calculateStochRSI(closes, rsiPeriod = 14, stochPeriod = 14, kSmo
     }
   }
 
-  // %K é a SMA de stochRsiRaw com kSmooth períodos
+  // %K is the SMA of stochRsiRaw with kSmooth periods
   const k = calculateSMA(stochRsiRaw, kSmooth);
-  // %D é a SMA de %K com dSmooth períodos
+  // %D is the SMA of %K with dSmooth periods
   const d = calculateSMA(k, dSmooth);
 
   return { k, d, rsi };
 }
 
 /**
- * Detecta divergências no Stochastic RSI.
- * @param {Array<number>} prices - Preços de fechamento ou mínimas/máximas
- * @param {Array<number>} stochRsiK - Linha %K do Stochastic RSI
- * @param {number} windowSize - Janela de análise retrospectiva
+ * Detects divergences in the Stochastic RSI.
+ * @param {Array<number>} prices - Closing prices or lows/highs
+ * @param {Array<number>} stochRsiK - %K line of the Stochastic RSI
+ * @param {number} windowSize - Retrospective analysis window
  * @returns {{type: 'BULLISH' | 'BEARISH' | 'NONE', p1Index: number, p2Index: number}}
  */
 export function detectDivergences(prices, stochRsiK, windowSize = 35) {
-  const strength = 2; // Número de vizinhos de cada lado para ser pivô
+  const strength = 2; // Number of neighbors on each side to be a pivot
   const pivots = [];
 
-  // Encontrar Pivôs locais no Preço
+  // Find local pivots in the Price
   for (let i = strength; i < prices.length - strength; i++) {
     if (isNaN(prices[i]) || isNaN(stochRsiK[i])) continue;
 
-    // Fundo local (Low Pivot)
+    // Local bottom (Low Pivot)
     const isPriceLowPivot = prices[i] < Math.min(...prices.slice(i - strength, i)) && 
                             prices[i] < Math.min(...prices.slice(i + 1, i + strength + 1));
     if (isPriceLowPivot) {
       pivots.push({ index: i, price: prices[i], indicatorVal: stochRsiK[i], type: 'low' });
     }
 
-    // Topo local (High Pivot)
+    // Local top (High Pivot)
     const isPriceHighPivot = prices[i] > Math.max(...prices.slice(i - strength, i)) && 
                              prices[i] > Math.max(...prices.slice(i + 1, i + strength + 1));
     if (isPriceHighPivot) {
@@ -160,26 +160,26 @@ export function detectDivergences(prices, stochRsiK, windowSize = 35) {
     }
   }
 
-  // Filtrar os 2 últimos pivôs de cada tipo dentro da janela de análise
+  // Filter the last 2 pivots of each type within the analysis window
   const lowPivots = pivots.filter(p => p.type === 'low').slice(-2);
   const highPivots = pivots.filter(p => p.type === 'high').slice(-2);
 
-  // Verificar Divergência Bullish (Alta)
+  // Check for Bullish Divergence
   if (lowPivots.length === 2) {
     const [p1, p2] = lowPivots;
     if (prices.length - p2.index <= windowSize) {
-      // Divergência Regular: Preço faz fundo mais baixo, mas indicador faz fundo mais alto (sobrevenda)
+      // Regular Divergence: Price makes a lower low, but indicator makes a higher low (oversold)
       if (p2.price < p1.price && p2.indicatorVal > p1.indicatorVal && (p2.indicatorVal <= 25 || p1.indicatorVal <= 25)) {
         return { type: 'BULLISH', p1Index: p1.index, p2Index: p2.index };
       }
     }
   }
 
-  // Verificar Divergência Bearish (Baixa)
+  // Check for Bearish Divergence
   if (highPivots.length === 2) {
     const [p1, p2] = highPivots;
     if (prices.length - p2.index <= windowSize) {
-      // Divergência Regular: Preço faz topo mais alto, mas indicador faz topo mais baixo (sobrecompra)
+      // Regular Divergence: Price makes a higher high, but indicator makes a lower high (overbought)
       if (p2.price > p1.price && p2.indicatorVal < p1.indicatorVal && (p2.indicatorVal >= 75 || p1.indicatorVal >= 75)) {
         return { type: 'BEARISH', p1Index: p1.index, p2Index: p2.index };
       }
@@ -190,9 +190,9 @@ export function detectDivergences(prices, stochRsiK, windowSize = 35) {
 }
 
 /**
- * Detecta Fair Value Gaps (FVG) no histórico de velas.
- * @param {Array} candles - Array de objetos contendo high e low
- * @returns {Array} Array de FVGs não mitigados
+ * Detects Fair Value Gaps (FVG) in the candle history.
+ * @param {Array} candles - Array of objects containing high and low
+ * @returns {Array} Array of unmitigated FVGs
  */
 export function detectFVGs(candles) {
   const fvgs = [];
@@ -226,7 +226,7 @@ export function detectFVGs(candles) {
     }
   }
 
-  // Validar mitigação
+  // Validate mitigation
   for (let f = 0; f < fvgs.length; f++) {
     const fvg = fvgs[f];
     const checkStartIndex = fvg.startIndex + 2;
@@ -247,50 +247,50 @@ export function detectFVGs(candles) {
 }
 
 /**
- * Encontra as principais zonas de Suporte e Resistência por agrupamento (clustering).
- * @param {Array} candles - Velas históricas
- * @returns {{supports: Array<number>, resistances: Array<number>}} Níveis de preços calculados
+ * Finds the main Support and Resistance zones by clustering.
+ * @param {Array} candles - Historical candles
+ * @returns {{supports: Array<number>, resistances: Array<number>}} Calculated price levels
  */
 export function detectSupportResistance(candles) {
   if (candles.length === 0) return { supports: [], resistances: [] };
   
   const currentPrice = candles[candles.length - 1].close;
   const pivots = [];
-  const strength = 4; // Pivôs mais significativos (4 velas de vizinhança)
+  const strength = 4; // Most significant pivots (4 neighbor candles)
 
-  // 1. Encontrar Pivôs
+  // 1. Find Pivots
   for (let i = strength; i < candles.length - strength; i++) {
     const slice = candles.slice(i - strength, i + strength + 1);
     const lows = slice.map(c => c.low);
     const highs = slice.map(c => c.high);
 
-    // Suporte local
+    // Local support
     if (candles[i].low === Math.min(...lows)) {
       pivots.push({ price: candles[i].low, type: 'support', index: i });
     }
-    // Resistência local
+    // Local resistance
     if (candles[i].high === Math.max(...highs)) {
       pivots.push({ price: candles[i].high, type: 'resistance', index: i });
     }
   }
 
-  // 2. Contar Retestes (Touches) para cada pivô
+  // 2. Count Retests (Touches) for each pivot
   const scoredPivots = pivots.map(p => {
     let touches = 0;
-    const threshold = p.price * 0.012; // tolerância de 1.2%
+    const threshold = p.price * 0.012; // 1.2% tolerance
     
-    // Contar retestes em todo o histórico
+    // Count retests in all history
     for (let j = 0; j < candles.length; j++) {
       if (j === p.index) continue;
       
       const c = candles[j];
       if (p.type === 'support') {
-        // Mínima da vela ou corpo perto do nível
+        // Candle low or body near the level
         if (Math.abs(c.low - p.price) <= threshold || Math.abs(Math.min(c.open, c.close) - p.price) <= threshold) {
           touches++;
         }
       } else {
-        // Máxima da vela ou corpo perto do nível
+        // Candle high or body near the level
         if (Math.abs(c.high - p.price) <= threshold || Math.abs(Math.max(c.open, c.close) - p.price) <= threshold) {
           touches++;
         }
@@ -300,8 +300,8 @@ export function detectSupportResistance(candles) {
     return { price: p.price, type: p.type, touches };
   });
 
-  // 3. Mesclar níveis muito próximos (dentro de 2% de diferença)
-  // Classificar por quantidade de toques decrescente para priorizar os níveis mais fortes
+  // 3. Merge levels that are very close (within 2% difference)
+  // Sort by descending touch count to prioritize stronger levels
   const consolidate = (items) => {
     const consolidated = [];
     const sorted = items.sort((a, b) => b.touches - a.touches);
@@ -317,15 +317,15 @@ export function detectSupportResistance(candles) {
 
   const allConsolidated = consolidate(scoredPivots);
 
-  // 4. Classificar e filtrar dinamicamente com base no preço atual (Princípio de Inversão de Papel)
-  // Suportes: QUALQUER pivô consolidado abaixo do preço atual, ordenados do mais próximo ao mais distante
+  // 4. Dynamically sort and filter based on current price (Role Reversal Principle)
+  // Supports: ANY consolidated pivot below the current price, sorted from closest to farthest
   const activeSupports = allConsolidated
     .filter(p => p.price < currentPrice)
     .sort((a, b) => b.price - a.price)
     .slice(0, 3)
     .map(p => p.price);
 
-  // Resistências: QUALQUER pivô consolidado acima do preço atual, ordenados do mais próximo ao mais distante
+  // Resistances: ANY consolidated pivot above the current price, sorted from closest to farthest
   const activeResistances = allConsolidated
     .filter(p => p.price > currentPrice)
     .sort((a, b) => a.price - b.price)
@@ -339,128 +339,137 @@ export function detectSupportResistance(candles) {
 }
 
 /**
- * Roda o motor de predição combinando todos os indicadores e dados on-chain.
- * @param {number} currentPrice - Preço atual do ativo
- * @param {Object} indicators - EMAs, SMAs, RSI, StochRSI calculados
- * @param {Array} fvgs - FVGs ativos
- * @param {Object} sr - Suportes e Resistências
- * @param {Object} onchain - Métricas Onchain (sthRp, lthRp, mvrvZscore, rainbowBand)
+ * Runs the prediction engine combining all indicators and on-chain data.
+ * @param {number} currentPrice - Current price of the asset
+ * @param {Object} indicators - Calculated EMAs, SMAs, RSI, StochRSI
+ * @param {Array} fvgs - Active FVGs
+ * @param {Object} sr - Supports and Resistances
+ * @param {Object} onchain - On-chain metrics (sthRp, lthRp, mvrvZscore, rainbowBand)
+ * @param {string} timeframe - Current timeframe
  * @returns {Object} { score, bias, details }
  */
-export function runPredictionEngine(currentPrice, indicators, fvgs, sr, onchain) {
+export function runPredictionEngine(currentPrice, indicators, fvgs, sr, onchain, timeframe = '1w') {
   let score = 0;
   const details = [];
 
-  // 1. Tendência de Médias Móveis (Peso: 40%)
+  const timeframeLabels = {
+    '3d': '3 Days',
+    '1w': 'Weekly',
+    '2w': '2 Weeks',
+    '1M': 'Monthly'
+  };
+  const tfLabel = timeframeLabels[timeframe] || timeframe;
+
+  // 1. Moving Averages Trend (Weight: 40%)
   const ema9Val = indicators.ema9[indicators.ema9.length - 1];
   const ema21Val = indicators.ema21[indicators.ema21.length - 1];
   const ema52Val = indicators.ema52[indicators.ema52.length - 1];
   const sma100Val = indicators.sma100[indicators.sma100.length - 1];
   const sma200Val = indicators.sma200[indicators.sma200.length - 1];
 
-  // A) Preço acima da EMA 21 Semanal
+  // A) Price above EMA 21
   if (!isNaN(ema21Val)) {
     if (currentPrice > ema21Val) {
       score += 20;
-      details.push({ factor: 'Preço > EMA 21 Semanal (Tendência Bullish)', score: 20 });
+      details.push({ factor: `Price > EMA 21 (${tfLabel}) (Bullish Trend)`, score: 20 });
     } else {
       score -= 20;
-      details.push({ factor: 'Preço < EMA 21 Semanal (Tendência Bearish)', score: -20 });
+      details.push({ factor: `Price < EMA 21 (${tfLabel}) (Bearish Trend)`, score: -20 });
     }
   }
 
-  // B) Alinhamento de médias (9 > 21 > 52)
+  // B) Averages alignment (9 > 21 > 52)
   if (!isNaN(ema9Val) && !isNaN(ema21Val) && !isNaN(ema52Val)) {
     if (ema9Val > ema21Val && ema21Val > ema52Val) {
       score += 20;
-      details.push({ factor: 'Alinhamento de Médias Bullish (9 > 21 > 52)', score: 20 });
+      details.push({ factor: 'Bullish Averages Alignment (9 > 21 > 52)', score: 20 });
     } else if (ema9Val < ema21Val && ema21Val < ema52Val) {
       score -= 20;
-      details.push({ factor: 'Alinhamento de Médias Bearish (9 < 21 < 52)', score: -20 });
+      details.push({ factor: 'Bearish Averages Alignment (9 < 21 < 52)', score: -20 });
     } else {
-      details.push({ factor: 'Médias em Consolidação / Sem Alinhamento', score: 0 });
+      details.push({ factor: 'Averages in Consolidation / Unaligned', score: 0 });
     }
   }
 
-  // 2. Momento / Divergência (Peso: 20%)
+  // 2. Momentum / Divergence (Weight: 20%)
   const divResult = detectDivergences(indicators.closes, indicators.stochK);
   if (divResult.type === 'BULLISH') {
     score += 10;
-    details.push({ factor: 'Divergência Bullish no Stoch RSI Detectada', score: 10 });
+    details.push({ factor: 'Bullish Divergence on Stoch RSI Detected', score: 10 });
   } else if (divResult.type === 'BEARISH') {
     score -= 10;
-    details.push({ factor: 'Divergência Bearish no Stoch RSI Detectada', score: -10 });
+    details.push({ factor: 'Bearish Divergence on Stoch RSI Detected', score: -10 });
   } else {
-    details.push({ factor: 'Sem divergências ativas no Stoch RSI', score: 0 });
+    details.push({ factor: 'No active divergences on Stoch RSI', score: 0 });
   }
 
-  // RSI Semanal exaustão
+  // RSI exhaustion on selected timeframe
   const rsiVal = indicators.rsi[indicators.rsi.length - 1];
   if (!isNaN(rsiVal)) {
     if (rsiVal < 35) {
       score += 10;
-      details.push({ factor: 'RSI Semanal em Sobrevenda (Exaustão de Venda)', score: 10 });
+      details.push({ factor: `RSI (${tfLabel}) in Oversold (Seller Exhaustion)`, score: 10 });
     } else if (rsiVal > 70) {
       score -= 10;
-      details.push({ factor: 'RSI Semanal em Sobrecompra (Exaustão de Compra)', score: -10 });
+      details.push({ factor: `RSI (${tfLabel}) in Overbought (Buyer Exhaustion)`, score: -10 });
     } else {
-      details.push({ factor: 'RSI em zona neutra', score: 0 });
+      details.push({ factor: `RSI (${tfLabel}) in neutral zone`, score: 0 });
     }
   }
 
-  // 3. Price Action: FVG e S/R (Peso: 20%)
-  // Verificar se o preço atual está tocando um Bullish FVG ativo
+  // 3. Price Action: FVG and S/R (Weight: 20%)
+  // Check if current price is touching an active Bullish FVG
   const touchingBullishFvg = fvgs.some(f => f.type === 'BULLISH' && currentPrice <= f.topPrice && currentPrice >= f.bottomPrice);
   if (touchingBullishFvg) {
     score += 10;
-    details.push({ factor: 'Preço em Zona de Rebalanceamento (Bullish FVG)', score: 10 });
+    details.push({ factor: 'Price in Rebalancing Zone (Bullish FVG)', score: 10 });
   }
   const touchingBearishFvg = fvgs.some(f => f.type === 'BEARISH' && currentPrice <= f.topPrice && currentPrice >= f.bottomPrice);
   if (touchingBearishFvg) {
     score -= 10;
-    details.push({ factor: 'Preço em Zona de Rebalanceamento (Bearish FVG)', score: -10 });
+    details.push({ factor: 'Price in Rebalancing Zone (Bearish FVG)', score: -10 });
   }
 
-  // Verificar se o preço está próximo a um suporte chave (dentro de 2%)
+  // Check if price is close to a key support (within 2%)
   const nearSupport = sr.supports.some(s => Math.abs(currentPrice - s) / s <= 0.02);
   if (nearSupport) {
     score += 10;
-    details.push({ factor: 'Preço próximo à Zona de Suporte Estática', score: 10 });
+    details.push({ factor: 'Price close to Static Support Zone', score: 10 });
   }
   const nearResistance = sr.resistances.some(r => Math.abs(currentPrice - r) / r <= 0.02);
   if (nearResistance) {
     score -= 10;
-    details.push({ factor: 'Preço próximo à Zona de Resistência Estática', score: -10 });
+    details.push({ factor: 'Price close to Static Resistance Zone', score: -10 });
   }
 
-  // 4. Confluência On-Chain (Peso: 20%)
+  // 4. On-Chain Confluence (Weight: 20%)
   if (onchain) {
-    // Preço vs STH-RP
+    // Price vs STH-RP
     if (onchain.sthRp) {
       if (currentPrice > onchain.sthRp) {
         score += 10;
-        details.push({ factor: 'Preço > Realized Price de Curto Prazo (STH-RP)', score: 10 });
+        details.push({ factor: 'Price > Short-Term Realized Price (STH-RP)', score: 10 });
       } else {
         score -= 10;
-        details.push({ factor: 'Preço < Realized Price de Curto Prazo (STH-RP)', score: -10 });
+        details.push({ factor: 'Price < Short-Term Realized Price (STH-RP)', score: -10 });
       }
     }
     // MVRV Z-Score
     if (onchain.mvrvZscore !== undefined) {
       if (onchain.mvrvZscore < 0.2) {
         score += 10;
-        details.push({ factor: 'MVRV Z-Score Subvalorizado (< 0.2)', score: 10 });
+        details.push({ factor: 'MVRV Z-Score Undervalued (< 0.2)', score: 10 });
       } else if (onchain.mvrvZscore > 3.0) {
         score -= 10;
-        details.push({ factor: 'MVRV Z-Score Sobrevalorizado (> 3.0)', score: -10 });
+        details.push({ factor: 'MVRV Z-Score Overvalued (> 3.0)', score: -10 });
       }
     }
   }
 
-  // Normalizar score final para garantir limite de -100 a +100
+  // Normalize final score to ensure limit of -100 to +100
   score = Math.max(-100, Math.min(100, score));
 
-  let bias = 'NEUTRO';
+  let bias = 'NEUTRAL';
   if (score >= 40) bias = 'BULLISH';
   if (score <= -40) bias = 'BEARISH';
 

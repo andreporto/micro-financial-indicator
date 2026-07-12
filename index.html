@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SaaS Financial Indicator - Dashboard & Documentação</title>
+  <title>SaaS Financial Indicator - Dashboard & Documentation</title>
   <link rel="stylesheet" href="style.css">
   <!-- TradingView Lightweight Charts CDN -->
   <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
@@ -19,13 +19,13 @@
         <i data-lucide="trending-up" class="logo-icon"></i>
         <span>Micro Financial <span class="logo-accent">AI Indicator</span></span>
       </div>
-      <!-- Abas Principais de Navegação -->
+      <!-- Main Navigation Links -->
       <div class="nav-links" id="main-tabs">
-        <button class="tab-link active" data-main-tab="inicio">Início</button>
-        <button class="tab-link" data-main-tab="dashboard">Dashboard Analítico</button>
-        <button class="tab-link" data-main-tab="predicao">Tese de Predição</button>
-        <button class="tab-link" data-main-tab="onchain">Dados On-Chain</button>
-        <button class="tab-link" data-main-tab="docs">Documentação do Sistema</button>
+        <button class="tab-link active" data-main-tab="inicio">Home</button>
+        <button class="tab-link" data-main-tab="dashboard">Analytical Dashboard</button>
+        <button class="tab-link" data-main-tab="predicao">Prediction Thesis</button>
+        <button class="tab-link" data-main-tab="onchain">On-Chain Data</button>
+        <button class="tab-link" data-main-tab="docs">System Documentation</button>
       </div>
       <div class="nav-actions">
         <span class="badge badge-success">API Connect: Online</span>
@@ -33,24 +33,24 @@
     </div>
   </nav>
 
-  <!-- Container de Abas Principais -->
+  <!-- Main Tabs Content Container -->
   <div class="main-tabs-content">
 
-    <!-- ABA 1: INÍCIO (HERO) -->
+    <!-- TAB 1: HOME (HERO) -->
     <section class="main-panel active" id="panel-inicio">
       <header class="hero">
         <div class="hero-content">
           <div class="tagline">
             <span class="pulse-icon"></span>
-            <span>Métricas de Alta Periodicidade & Dados On-Chain</span>
+            <span>High Frequency Metrics & On-Chain Data</span>
           </div>
-          <h1>Decisões macro de trading baseadas em confluência matemática</h1>
+          <h1>Macro trading decisions based on mathematical confluence</h1>
           <p class="hero-desc">
-            Monitore BTC, ETH e SOL em tempos gráficos institucionais (3d, 1w, 2w, 1M). Filtre o ruído do dia a dia combinando indicadores técnicos avançados com a real saúde on-chain da rede.
+            Monitor BTC, ETH, and SOL in institutional timeframes (3d, 1w, 2w, 1M). Filter daily noise by combining advanced technical indicators with the real on-chain health of the network.
           </p>
           <div class="hero-buttons">
-            <button class="btn btn-primary" onclick="switchMainTab('dashboard')">Acessar Dashboard</button>
-            <button class="btn btn-secondary" onclick="switchMainTab('docs')">Ver Documentação</button>
+            <button class="btn btn-primary" onclick="switchMainTab('dashboard')">Access Dashboard</button>
+            <button class="btn btn-secondary" onclick="switchMainTab('docs')">View Documentation</button>
           </div>
         </div>
         <div class="hero-visual">
@@ -67,7 +67,7 @@
                   <span class="stat-val bullish" id="hero-score-val">+70 / 100</span>
                 </div>
                 <div>
-                  <span class="stat-label">Viés Macro</span>
+                  <span class="stat-label">Macro Bias</span>
                   <span class="stat-val status-bullish" id="hero-bias-val">BULLISH</span>
                 </div>
               </div>
@@ -85,34 +85,34 @@
         </div>
       </header>
 
-      <!-- Aviso de Isenção de Responsabilidade (Disclaimer) -->
+      <!-- Disclaimer Alert Box -->
       <div class="disclaimer-alert-box" style="margin-top: 40px;">
         <div class="disclaimer-icon-col">
           <i data-lucide="shield-alert" class="disclaimer-icon"></i>
         </div>
         <div class="disclaimer-text-col">
-          <h4>Aviso de Isenção de Responsabilidade (Disclaimer)</h4>
+          <h4>Disclaimer</h4>
           <p>
-            Esta plataforma é uma ferramenta de simulação automática gerada por Inteligência Artificial por meio de um mecanismo puramente probabilístico e estatístico. 
-            <strong>Não se trata, em nenhuma circunstância, de recomendação de investimentos</strong>, indicação de compra/venda de criptoativos ou conselhos financeiros. 
-            Os dados e previsões baseiam-se em modelos preditivos que podem não retratar a realidade. O mercado financeiro possui riscos altos e você é o único responsável por suas operações.
+            This platform is an automated simulation tool generated by Artificial Intelligence through a purely probabilistic and statistical mechanism. 
+            <strong>Under no circumstances does it constitute investment recommendations</strong>, buy/sell indications for crypto assets, or financial advice. 
+            Data and forecasts are based on predictive models that may not reflect reality. The financial market carries high risks, and you are solely responsible for your trades.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- ABA 2: DASHBOARD TÉCNICO -->
+    <!-- TAB 2: TECHNICAL DASHBOARD -->
     <section class="main-panel" id="panel-dashboard">
       <div class="dashboard-section-header">
-        <h2>Painel Técnico de Gráficos</h2>
-        <p>Dados agregados diretamente da Binance API em tempo real</p>
+        <h2>Technical Chart Dashboard</h2>
+        <p>Real-time aggregated data directly from Binance API</p>
       </div>
 
       <div class="dashboard-container">
-        <!-- Sidebar de Controles -->
+        <!-- Sidebar Controls -->
         <aside class="dashboard-sidebar">
           <div class="control-group">
-            <h3>Criptoativo</h3>
+            <h3>Crypto Asset</h3>
             <div class="selector-buttons" id="asset-selector">
               <button class="selector-btn active" data-asset="BTC">BTC / USD</button>
               <button class="selector-btn" data-asset="ETH">ETH / USD</button>
@@ -123,15 +123,15 @@
           <div class="control-group">
             <h3>Timeframe (HTF)</h3>
             <div class="selector-buttons" id="timeframe-selector">
-              <button class="selector-btn" data-timeframe="3d">3 Dias</button>
-              <button class="selector-btn active" data-timeframe="1w">1 Semana</button>
-              <button class="selector-btn" data-timeframe="2w">2 Semanas</button>
-              <button class="selector-btn" data-timeframe="1M">Mensal</button>
+              <button class="selector-btn" data-timeframe="3d">3 Days</button>
+              <button class="selector-btn active" data-timeframe="1w">1 Week</button>
+              <button class="selector-btn" data-timeframe="2w">2 Weeks</button>
+              <button class="selector-btn" data-timeframe="1M">Monthly</button>
             </div>
           </div>
 
           <div class="control-group">
-            <h3>Médias Móveis</h3>
+            <h3>Moving Averages</h3>
             <label class="toggle-container">
               <input type="checkbox" id="toggle-ema9" checked>
               <span class="toggle-slider"></span>
@@ -160,16 +160,16 @@
           </div>
 
           <div class="control-group">
-            <h3>Níveis de Preço</h3>
+            <h3>Price Levels</h3>
             <label class="toggle-container">
               <input type="checkbox" id="toggle-sr">
               <span class="toggle-slider"></span>
-              <span class="toggle-label"><span class="indicator-dot" style="background-color: #10b981;"></span> Suporte e Resistência</span>
+              <span class="toggle-label"><span class="indicator-dot" style="background-color: #10b981;"></span> Support & Resistance</span>
             </label>
           </div>
 
           <div class="control-group">
-            <h3>Status On-Chain</h3>
+            <h3>On-Chain Status</h3>
             <div class="onchain-quick-status">
               <div class="onchain-item">
                 <span class="label">MVRV Z-Score:</span>
@@ -187,7 +187,7 @@
           </div>
         </aside>
 
-        <!-- Área de Gráfico -->
+        <!-- Chart Area -->
         <main class="chart-area">
           <div class="chart-header">
             <div class="asset-info">
@@ -209,24 +209,24 @@
       </div>
     </section>
 
-    <!-- ABA 3: TESE DE PREDIÇÃO -->
+    <!-- TAB 3: PREDICTION THESIS -->
     <section class="main-panel" id="panel-predicao">
       <div class="tab-section-header">
-        <h2>Tese de Predição & Score SCM</h2>
-        <p>Previsões baseadas no motor de confluência ponderada para os próximos 60 dias</p>
+        <h2>Prediction Thesis & SCM Score</h2>
+        <p>Forecasts based on the weighted confluence engine for the next 60 days</p>
       </div>
 
-      <!-- Aviso de Isenção de Responsabilidade (Disclaimer) -->
+      <!-- Disclaimer Alert Box -->
       <div class="disclaimer-alert-box">
         <div class="disclaimer-icon-col">
           <i data-lucide="shield-alert" class="disclaimer-icon"></i>
         </div>
         <div class="disclaimer-text-col">
-          <h4>Aviso de Isenção de Responsabilidade (Disclaimer)</h4>
+          <h4>Disclaimer</h4>
           <p>
-            As previsões calculadas pelo motor SCM são baseadas em confluência probabilística de dados históricos e de rede. 
-            <strong>Não representam aconselhamento ou garantia de ganhos</strong>. A atividade do mercado pode violar regras estatísticas 
-            e você deve usar estas informações apenas para simulações e estudos educacionais.
+            Forecasts calculated by the SCM engine are based on probabilistic confluence of historical and network data. 
+            <strong>They do not represent investment advice or guaranteed gains</strong>. Market activity can violate statistical rules, 
+            and you should use this information only for simulations and educational studies.
           </p>
         </div>
       </div>
@@ -234,7 +234,7 @@
       <div class="prediction-tab-container">
         <div id="estrategia" class="prediction-module card">
           <div class="card-header">
-            <h3><i data-lucide="shield-alert" class="card-icon"></i> Relatório de Predição Estratégica (60 Dias)</h3>
+            <h3><i data-lucide="shield-alert" class="card-icon"></i> Strategic Prediction Report (60 Days)</h3>
             <span class="badge badge-primary">SCM Engine v1.0</span>
           </div>
           <div class="prediction-grid">
@@ -249,42 +249,42 @@
                   <span class="label">SCM Score</span>
                 </div>
               </div>
-              <div class="prediction-bias-badge" id="pred-bias-badge">NEUTRO</div>
+              <div class="prediction-bias-badge" id="pred-bias-badge">NEUTRAL</div>
             </div>
 
             <div class="prediction-thesis">
-              <h4>Tese e Plano de Ação:</h4>
+              <h4>Thesis & Action Plan:</h4>
               <p id="pred-thesis-text">
-                Carregando dados de mercado e processando confluências técnicas e on-chain...
+                Loading market data and processing technical and on-chain confluences...
               </p>
               <div class="action-points">
                 <div class="action-item">
-                  <span class="action-badge bg-green">COMPRA</span>
-                  <span id="pred-buy-zone">Carregando limites...</span>
+                  <span class="action-badge bg-green">BUY</span>
+                  <span id="pred-buy-zone">Loading limits...</span>
                 </div>
                 <div class="action-item">
-                  <span class="action-badge bg-red">ALVO</span>
-                  <span id="pred-target-zone">Carregando alvos...</span>
+                  <span class="action-badge bg-red">TARGET</span>
+                  <span id="pred-target-zone">Loading targets...</span>
                 </div>
                 <div class="action-item">
                   <span class="action-badge bg-gray">STOP</span>
-                  <span id="pred-stop-zone">Carregando invalidação...</span>
+                  <span id="pred-stop-zone">Loading invalidation...</span>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="scoring-details-table">
-            <h4>Detalhamento dos Fatores de Confluência:</h4>
+            <h4>Detailed Confluence Factors:</h4>
             <table class="table" id="scoring-table">
               <thead>
                 <tr>
-                  <th>Fator Analisado</th>
-                  <th>Pontuação Adicionada/Subtraída</th>
+                  <th>Analyzed Factor</th>
+                  <th>Score Added/Subtracted</th>
                 </tr>
               </thead>
               <tbody>
-                <!-- Inserido dinamicamente -->
+                <!-- Dynamically inserted -->
               </tbody>
             </table>
           </div>
@@ -292,11 +292,11 @@
       </div>
     </section>
 
-    <!-- ABA 4: DADOS ON-CHAIN -->
+    <!-- TAB 4: ON-CHAIN DATA -->
     <section class="main-panel" id="panel-onchain">
       <div class="tab-section-header">
-        <h2>Confluência Fundamental On-Chain</h2>
-        <p>Indicadores estruturais baseados nas atividades e custos registrados na blockchain</p>
+        <h2>Fundamental On-Chain Confluence</h2>
+        <p>Structural indicators based on blockchain activity and costs</p>
       </div>
 
       <div class="onchain-grid">
@@ -304,15 +304,15 @@
         <div class="card onchain-card">
           <div class="card-title-row">
             <i data-lucide="gauge" class="card-icon text-blue"></i>
-            <h3>Rainbow Chart (Banda Logarítmica)</h3>
+            <h3>Rainbow Chart (Logarithmic Band)</h3>
           </div>
           <p class="onchain-card-desc">
-            Enquadra o preço do ativo dentro de bandas logarítmicas de crescimento histórico, mapeando a ganância do mercado.
+            Encompasses the asset price within logarithmic bands of historical growth, mapping market greed.
           </p>
           <div class="onchain-card-body">
             <div class="onchain-metric-display">
-              <span class="stat-label">Banda Atual</span>
-              <span class="stat-val text-green" id="onchain-rainbow-band">Acumular</span>
+              <span class="stat-label">Current Band</span>
+              <span class="stat-val text-green" id="onchain-rainbow-band">Accumulate</span>
             </div>
             <div class="rainbow-visual-bar">
               <span class="rainbow-segment bg-red-dark"></span>
@@ -334,7 +334,7 @@
             <h3>MVRV Z-Score</h3>
           </div>
           <p class="onchain-card-desc">
-            Mede a diferença em desvios padrão entre o valor de mercado e o valor realizado (preço pago pelas moedas).
+            Measures the standard deviation difference between market cap and realized value (price paid for the coins).
           </p>
           <div class="onchain-card-body">
             <div class="onchain-metric-display">
@@ -345,9 +345,9 @@
               <div class="progress-bar-fill" id="onchain-mvrv-progress" style="width: 35%"></div>
             </div>
             <div class="progress-labels">
-              <span>Fundo (0)</span>
-              <span>Médio (1.5)</span>
-              <span>Topo (>3.0)</span>
+              <span>Bottom (0)</span>
+              <span>Mid (1.5)</span>
+              <span>Top (>3.0)</span>
             </div>
           </div>
         </div>
@@ -356,102 +356,102 @@
         <div class="card onchain-card">
           <div class="card-title-row">
             <i data-lucide="layers" class="card-icon text-blue"></i>
-            <h3>Preços Realizados (Custo de Aquisição)</h3>
+            <h3>Realized Prices (Acquisition Cost)</h3>
           </div>
           <p class="onchain-card-desc">
-            Compara o preço atual com o preço médio pago por investidores de curto (STH) e longo (LTH) prazo.
+            Compares the current price with the average price paid by short-term (STH) and long-term (LTH) investors.
           </p>
           <div class="onchain-card-body">
             <div class="realized-price-row">
               <div class="realized-price-col">
-                <span class="stat-label">Custo Curto Prazo (STH-RP)</span>
+                <span class="stat-label">Short-Term Cost (STH-RP)</span>
                 <span class="stat-val text-blue" id="onchain-sth-rp">$0.00</span>
               </div>
               <div class="realized-price-col">
-                <span class="stat-label">Custo Longo Prazo (LTH-RP)</span>
+                <span class="stat-label">Long-Term Cost (LTH-RP)</span>
                 <span class="stat-val" id="onchain-lth-rp">$0.00</span>
               </div>
             </div>
             <div class="realized-price-status" id="onchain-realized-relation">
-              O preço está acima de ambos os custos de aquisição, confirmando a estrutura saudável de alta.
+              Price is above both acquisition costs, confirming a healthy bullish structure.
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ABA 5: DOCUMENTAÇÃO -->
+    <!-- TAB 5: DOCUMENTATION -->
     <section class="main-panel" id="panel-docs">
       <div class="docs-section">
         <div class="section-header">
-          <h2>Documentação Geral do Sistema</h2>
-          <p>Especificação de Engenharia de Software, Algoritmos e Fontes de Dados</p>
+          <h2>System Documentation</h2>
+          <p>Software Engineering Specification, Algorithms and Data Sources</p>
         </div>
 
         <div class="docs-tabs-container">
           <div class="docs-tabs-header" id="docs-tabs">
-            <button class="tab-btn active" data-tab="arquitetura">Arquitetura do SaaS</button>
-            <button class="tab-btn" data-tab="divergencias">Detector de Divergências</button>
-            <button class="tab-btn" data-tab="fvg">FVG e Suporte/Resistência</button>
-            <button class="tab-btn" data-tab="onchain">Integração On-Chain</button>
-            <button class="tab-btn" data-tab="predicao">Lógica do Score Ponderado</button>
+            <button class="tab-btn active" data-tab="arquitetura">SaaS Architecture</button>
+            <button class="tab-btn" data-tab="divergencias">Divergence Detector</button>
+            <button class="tab-btn" data-tab="fvg">FVG & Support/Resistance</button>
+            <button class="tab-btn" data-tab="onchain">On-Chain Integration</button>
+            <button class="tab-btn" data-tab="predicao">Weighted Score Logic</button>
           </div>
 
           <div class="docs-tabs-content">
-            <!-- Tab 1: Arquitetura -->
+            <!-- Tab 1: Architecture -->
             <article class="tab-panel active" id="tab-arquitetura">
-              <h3>Arquitetura de Dados Multicamadas</h3>
+              <h3>Multi-layer Data Architecture</h3>
               <p>
-                O SaaS opera em uma estrutura modular que separa a renderização do gráfico, o cálculo estatístico de indicadores e a integração com APIs on-chain de alta latência.
+                The SaaS operates in a modular structure that separates chart rendering, indicator statistical calculations, and integration with high-latency on-chain APIs.
               </p>
               <div class="tech-stack-grid">
                 <div class="stack-card">
-                  <h4>1. Coleta de Dados</h4>
-                  <p>Busca incremental em tempo de execução via APIs CORS habilitadas para a Binance (mercado spot). Suporte a dados diários (1d) para remontar timeframes complexos.</p>
+                  <h4>1. Data Collection</h4>
+                  <p>Incremental runtime fetch via CORS-enabled APIs for Binance (spot market). Support for daily data (1d) to reconstruct complex timeframes.</p>
                 </div>
                 <div class="stack-card">
-                  <h4>2. Agregação e Processamento</h4>
-                  <p>Mecanismos client-side e server-side consolidam as velas diárias em períodos de 3d e 2w, eliminando a dependência de endpoints restritos de exchanges.</p>
+                  <h4>2. Aggregation & Processing</h4>
+                  <p>Client-side and server-side mechanisms consolidate daily candles into 3d and 2w periods, eliminating dependency on restricted exchange endpoints.</p>
                 </div>
                 <div class="stack-card">
-                  <h4>3. Motor de Cálculo</h4>
-                  <p>Módulos matemáticos dedicados a computar médias móveis rápidas e lentas, osciladores, limites de desequilíbrio estrutural (FVGs) e pivôs S/R.</p>
+                  <h4>3. Calculation Engine</h4>
+                  <p>Dedicated mathematical modules to compute fast and slow moving averages, oscillators, structural imbalance limits (FVGs), and S/R pivots.</p>
                 </div>
               </div>
             </article>
 
-            <!-- Tab 2: Divergencias -->
+            <!-- Tab 2: Divergences -->
             <article class="tab-panel" id="tab-divergencias">
-              <h3>Detecção de Divergências de Alta Probabilidade</h3>
+              <h3>High Probability Divergence Detection</h3>
               <p>
-                Divergências no **Stochastic RSI** nos tempos gráficos de 3d e 1w fornecem excelentes gatilhos macro para exaustão de tendência.
+                Divergences on the **Stochastic RSI** in 3d and 1w timeframes provide excellent macro triggers for trend exhaustion.
               </p>
               <div class="formula-box">
-                <h4>Lógica de Identificação de Pivôs:</h4>
+                <h4>Pivot Identification Logic:</h4>
                 <p>
-                  O sistema monitora a ação de preço local e as curvas de momentum. Uma divergência de alta ocorre se o preço cria fundos decrescentes ($Low_2 < Low_1$) enquanto a linha rápida do Stoch RSI (%K) gera fundos ascendentes ($Stoch\_K_2 > Stoch\_K_1$), desde que pelo menos um dos fundos ocorra abaixo do limite de exaustão de venda ($Stoch\_K \le 20$).
+                  The system monitors local price action and momentum curves. A bullish divergence occurs if price creates lower lows ($Low_2 < Low_1$) while the fast line of Stoch RSI (%K) generates higher lows ($Stoch\_K_2 > Stoch\_K_1$), provided at least one of the lows occurs below the sell exhaustion limit ($Stoch\_K \le 20$).
                 </p>
               </div>
             </article>
 
             <!-- Tab 3: FVG -->
             <article class="tab-panel" id="tab-fvg">
-              <h3>Estrutura de Mercado: Fair Value Gaps e Zonas S/R</h3>
+              <h3>Market Structure: Fair Value Gaps and S/R Zones</h3>
               <p>
-                Fair Value Gaps medem a falta de liquidez no gráfico. O preço tem a tendência histórica de rebalancear essas áreas.
+                Fair Value Gaps measure the lack of liquidity on the chart. The price has a historical tendency to rebalance these areas.
               </p>
               <div class="fvg-explanation-row">
                 <div>
-                  <h4>Detecção do FVG (Sequência de 3 Velas)</h4>
+                  <h4>FVG Detection (3-Candle Sequence)</h4>
                   <ul>
-                    <li><strong>Bullish FVG:</strong> Mínima da Vela 3 > Máxima da Vela 1. A lacuna é tratada como zona de suporte para compras.</li>
-                    <li><strong>Bearish FVG:</strong> Máxima da Vela 3 < Mínima da Vela 1. A lacuna é tratada como zona de resistência para vendas.</li>
+                    <li><strong>Bullish FVG:</strong> Candle 3 Low > Candle 1 High. The gap is treated as a support zone for buys.</li>
+                    <li><strong>Bearish FVG:</strong> Candle 3 High < Candle 1 Low. The gap is treated as a resistance zone for sells.</li>
                   </ul>
                 </div>
                 <div>
-                  <h4>Zonas de Suporte e Resistência por Clustering de Retestes</h4>
+                  <h4>Support and Resistance Zones by Retest Clustering</h4>
                   <p>
-                    Os pivôs históricos são pontuados varrendo toda a série temporal e contando quantos retestes ocorreram próximos ao preço do pivô. Os níveis são consolidados excluindo duplicatas próximas, e ordenados com base na proximidade do preço atual, retornando as 3 zonas ativas mais fortes.
+                    Historical pivots are scored by sweeping the entire time series and counting how many retests occurred near the pivot price. Levels are consolidated by excluding nearby duplicates and sorted based on current price proximity, returning the 3 strongest active zones.
                   </p>
                 </div>
               </div>
@@ -459,60 +459,60 @@
 
             <!-- Tab 4: Onchain -->
             <article class="tab-panel" id="tab-onchain">
-              <h3>Confluência Fundamental On-Chain</h3>
+              <h3>Fundamental On-Chain Confluence</h3>
               <p>
-                As métricas de rede nos dão a confirmação se o preço está caro ou barato sob uma perspectiva de valor de utilidade e custo médio de mineração/aquisição.
+                Network metrics confirm whether the price is cheap or expensive from a utility value and average mining/acquisition cost perspective.
               </p>
               <table class="table docs-table">
                 <thead>
                   <tr>
-                    <th>Métrica</th>
-                    <th>Finalidade na Tomada de Decisão</th>
+                    <th>Metric</th>
+                    <th>Decision-Making Purpose</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td><strong>STH Realized Price (STH-RP)</strong></td>
-                    <td>Funciona como a média de compra de investidores recentes. Suporte dinâmico durante tendências saudáveis de alta.</td>
+                    <td>Acts as the average purchase price of recent investors. Dynamic support during healthy uptrends.</td>
                   </tr>
                   <tr>
                     <td><strong>LTH Realized Price (LTH-RP)</strong></td>
-                    <td>Média de custo dos "mãos fortes". Marca o nível histórico de capitulação final no mercado de baixa.</td>
+                    <td>Average cost of "strong hands". Marks the historical final capitulation level in bear markets.</td>
                   </tr>
                   <tr>
                     <td><strong>MVRV Z-Score</strong></td>
-                    <td>Identifica extremos de mercado em desvios padrão. Z-Score abaixo de 0.2 é oportunidade de compra macro.</td>
+                    <td>Identifies market extremes in standard deviations. Z-Score below 0.2 is a macro buying opportunity.</td>
                   </tr>
                   <tr>
                     <td><strong>Rainbow Chart</strong></td>
-                    <td>Enquadra o preço atual em curvas de crescimento logarítmico de longo prazo para determinar o nível de ganância.</td>
+                    <td>Frames the current price into long-term logarithmic growth curves to determine the greed level.</td>
                   </tr>
                 </tbody>
               </table>
             </article>
 
-            <!-- Tab 5: Predicao -->
+            <!-- Tab 5: Prediction -->
             <article class="tab-panel" id="tab-predicao">
-              <h3>Score de Confluência Multidimensional (SCM)</h3>
+              <h3>Multidimensional Confluence Score (SCM)</h3>
               <p>
-                O motor de predição atribui pesos numéricos específicos a cada pilar analítico para gerar a tese para os próximos 60 dias.
+                The prediction engine assigns specific numerical weights to each analytical pillar to generate the thesis for the next 60 days.
               </p>
               <div class="metrics-weights">
                 <div class="weight-item">
-                  <span class="weight-label">Tendência de Preço (Médias Móveis)</span>
-                  <span class="weight-val">40% do Score</span>
+                  <span class="weight-label">Price Trend (Moving Averages)</span>
+                  <span class="weight-val">40% of Score</span>
                 </div>
                 <div class="weight-item">
-                  <span class="weight-label">Momentum & Divergências (Stoch RSI / RSI)</span>
-                  <span class="weight-val">20% do Score</span>
+                  <span class="weight-label">Momentum & Divergences (Stoch RSI / RSI)</span>
+                  <span class="weight-val">20% of Score</span>
                 </div>
                 <div class="weight-item">
-                  <span class="weight-label">Zonas Estruturais (FVG & Suportes/Resistências)</span>
-                  <span class="weight-val">20% do Score</span>
+                  <span class="weight-label">Structural Zones (FVG & Supports/Resistances)</span>
+                  <span class="weight-val">20% of Score</span>
                 </div>
                 <div class="weight-item">
-                  <span class="weight-label">Saúde e Custos On-Chain (MVRV & Realized Prices)</span>
-                  <span class="weight-val">20% do Score</span>
+                  <span class="weight-label">On-Chain Health & Costs (MVRV & Realized Prices)</span>
+                  <span class="weight-val">20% of Score</span>
                 </div>
               </div>
             </article>
@@ -526,10 +526,10 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
-      <p>&copy; 2026 Micro Financial AI Indicator. Todos os direitos reservados.</p>
+      <p>&copy; 2026 Micro Financial AI Indicator. All rights reserved.</p>
       <div class="footer-meta" style="margin-top: 12px; max-width: 1000px; text-align: center; margin-left: auto; margin-right: auto;">
         <span style="font-size: 0.78rem; opacity: 0.65; line-height: 1.5; display: block;">
-          <strong>AVISO LEGAL:</strong> Esta plataforma é um mecanismo analítico simulado de forma automática por Inteligência Artificial (sistema puramente probabilístico). As informações aqui contidas NÃO constituem, sob nenhuma hipótese, recomendação de investimento, conselhos de alocação ou indicações de compra/venda de ativos. O mercado financeiro e de criptoativos é altamente volátil e de extremo risco. Previsões estatísticas podem diferir da realidade do mercado.
+          <strong>LEGAL DISCLAIMER:</strong> This platform is an analytical mechanism simulated automatically by Artificial Intelligence (a purely probabilistic system). The information contained herein does NOT, under any circumstances, constitute investment recommendations, allocation advice, or asset buy/sell indications. The financial and crypto asset market is highly volatile and carries extreme risk. Statistical forecasts may differ from actual market reality.
         </span>
       </div>
     </div>
@@ -539,10 +539,10 @@
   <script type="module" src="app.js"></script>
 
   <script>
-    // Inicializar os ícones do Lucide
+    // Initialize Lucide icons
     lucide.createIcons();
 
-    // Função global para facilitar navegação entre abas
+    // Global function to ease tab navigation
     window.switchMainTab = function(tabName) {
       const tabLink = document.querySelector(`#main-tabs .tab-link[data-main-tab="${tabName}"]`);
       if (tabLink) {
