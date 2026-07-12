@@ -315,23 +315,22 @@ export function detectSupportResistance(candles) {
     return consolidated;
   };
 
-  const supports = consolidate(scoredPivots.filter(p => p.type === 'support'));
-  const resistances = consolidate(scoredPivots.filter(p => p.type === 'resistance'));
+  const allConsolidated = consolidate(scoredPivots);
 
-  // 4. Filtrar e ordenar em relação ao preço atual
-  // Suportes: abaixo do preço atual, ordenados do mais próximo ao mais distante
-  const activeSupports = supports
-    .filter(s => s.price < currentPrice)
+  // 4. Classificar e filtrar dinamicamente com base no preço atual (Princípio de Inversão de Papel)
+  // Suportes: QUALQUER pivô consolidado abaixo do preço atual, ordenados do mais próximo ao mais distante
+  const activeSupports = allConsolidated
+    .filter(p => p.price < currentPrice)
     .sort((a, b) => b.price - a.price)
     .slice(0, 3)
-    .map(s => s.price);
+    .map(p => p.price);
 
-  // Resistências: acima do preço atual, ordenadas do mais próximo ao mais distante
-  const activeResistances = resistances
-    .filter(r => r.price > currentPrice)
+  // Resistências: QUALQUER pivô consolidado acima do preço atual, ordenados do mais próximo ao mais distante
+  const activeResistances = allConsolidated
+    .filter(p => p.price > currentPrice)
     .sort((a, b) => a.price - b.price)
     .slice(0, 3)
-    .map(r => r.price);
+    .map(p => p.price);
 
   return {
     supports: activeSupports,
