@@ -1285,3 +1285,233 @@ a {
   line-height: 1.5;
   margin: 0;
 }
+
+/* ==========================================================================
+   ABOUT THE AUTHOR (SOBRE O AUTOR)
+   ========================================================================== */
+#panel-autor.main-panel.active {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.autor-container {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 32px;
+  align-items: start;
+  margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .autor-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.autor-profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 24px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-premium);
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  background: var(--primary-muted);
+  border: 2px solid var(--primary-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.avatar-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--primary-light);
+}
+
+.profile-title h3 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.profile-bio {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.profile-tags .tag {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.autor-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.info-card, .support-card {
+  padding: 32px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-premium);
+}
+
+.info-card p, .support-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.info-card p strong, .support-card p strong {
+  color: var(--text-primary);
+}
+
+.donation-addresses {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.address-box {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.address-network {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.network-badge-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.network-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.network-badge.evm {
+  background: rgba(147, 51, 234, 0.15);
+  color: #a855f7;
+  border: 1px solid rgba(147, 51, 234, 0.25);
+}
+
+.network-badge.solana {
+  background: rgba(20, 241, 149, 0.15);
+  color: #14f195;
+  border: 1px solid rgba(20, 241, 149, 0.25);
+}
+
+.crypto-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.crypto-badge.usdc {
+  background: rgba(39, 117, 202, 0.15);
+  color: #2775ca;
+  border: 1px solid rgba(39, 117, 202, 0.25);
+}
+
+.crypto-badge.usdt {
+  background: rgba(38, 161, 123, 0.15);
+  color: #26a17b;
+  border: 1px solid rgba(38, 161, 123, 0.25);
+}
+
+.network-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.address-copy-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 12px;
+  gap: 12px;
+}
+
+.address-text {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--primary-hover);
+  word-break: break-all;
+  user-select: all;
+}
+
+.btn-copy-address {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-copy-address:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-copy-address.copied {
+  color: var(--green-bullish);
+  background: rgba(16, 185, 129, 0.1);
+}
+

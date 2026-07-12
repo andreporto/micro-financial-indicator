@@ -26,6 +26,7 @@
         <button class="tab-link" data-main-tab="predicao">Prediction Thesis</button>
         <button class="tab-link" data-main-tab="onchain">On-Chain Data</button>
         <button class="tab-link" data-main-tab="docs">System Documentation</button>
+        <button class="tab-link" data-main-tab="autor">Sobre o Autor</button>
       </div>
       <div class="nav-actions">
         <span class="badge badge-success">API Connect: Online</span>
@@ -516,6 +517,101 @@
                 </div>
               </div>
             </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: ABOUT THE AUTHOR -->
+    <section class="main-panel" id="panel-autor">
+      <div class="tab-section-header">
+        <h2>Sobre o Autor</h2>
+        <p>Desenvolvimento focado em engenharia de software de alta performance e compartilhamento de conhecimento técnico</p>
+      </div>
+
+      <div class="autor-container">
+        <!-- Perfil Principal -->
+        <div class="card autor-profile-card">
+          <div class="profile-header">
+            <div class="profile-avatar">
+              <i data-lucide="code-2" class="avatar-icon"></i>
+            </div>
+            <div class="profile-title">
+              <h3>Desenvolvedor Sênior</h3>
+              <span class="badge badge-primary">Open Source Contributor</span>
+            </div>
+          </div>
+          <p class="profile-bio">
+            Profissional de engenharia de software com ampla experiência no desenvolvimento de sistemas de alta performance, arquiteturas escaláveis e soluções financeiras descentralizadas.
+          </p>
+          <div class="profile-tags">
+            <span class="tag">Go</span>
+            <span class="tag">Rust</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Solidity</span>
+            <span class="tag">EVM & Solana</span>
+          </div>
+        </div>
+
+        <!-- Hobby, Comunidade e Apoio -->
+        <div class="autor-info-grid">
+          <div class="card info-card">
+            <div class="card-title-row">
+              <i data-lucide="heart" class="card-icon text-blue"></i>
+              <h3>Hobby & Comunidade</h3>
+            </div>
+            <p>
+              Os projetos publicados neste repositório do GitHub são desenvolvidos como um <strong>hobby nas horas vagas</strong>. A motivação por trás do compartilhamento desses códigos é puramente o desejo de <strong>ajudar a comunidade</strong> de desenvolvedores e entusiastas de finanças e Web3, disseminando boas práticas de programação e conhecimento prático aplicável.
+            </p>
+          </div>
+
+          <div class="card support-card">
+            <div class="card-title-row">
+              <i data-lucide="wallet" class="card-icon text-blue"></i>
+              <h3>Apoie o Projeto</h3>
+            </div>
+            <p>
+              Manter APIs rodando, compilar dados estatísticos em tempo real e documentar teses complexas exige tempo e dedicação. 
+              Se você deseja de alguma forma apoiar o meu esforço, pode realizar uma <strong>doação simbólica de qualquer valor</strong> em stablecoins nas redes abaixo:
+            </p>
+            
+            <div class="donation-addresses">
+              <!-- EVM Address Box -->
+              <div class="address-box">
+                <div class="address-network">
+                  <div class="network-badge-group">
+                    <span class="network-badge evm">EVM Networks</span>
+                    <span class="crypto-badge usdc">USDC</span>
+                    <span class="crypto-badge usdt">USDT</span>
+                  </div>
+                  <span class="network-desc">Ethereum, Arbitrum, Optimism, Polygon, BSC, Avalanche</span>
+                </div>
+                <div class="address-copy-wrapper">
+                  <span class="address-text" id="evm-address">0x6A42bC75341c7F86abE9c6828Bc462aa9ea07E0E</span>
+                  <button class="btn-copy-address" data-copy-target="evm-address" title="Copiar endereço EVM">
+                    <i data-lucide="copy" class="copy-icon"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Solana Address Box -->
+              <div class="address-box">
+                <div class="address-network">
+                  <div class="network-badge-group">
+                    <span class="network-badge solana">Solana Network</span>
+                    <span class="crypto-badge usdc">USDC</span>
+                    <span class="crypto-badge usdt">USDT</span>
+                  </div>
+                  <span class="network-desc">Solana Mainnet</span>
+                </div>
+                <div class="address-copy-wrapper">
+                  <span class="address-text" id="sol-address">9tQ8tJiJaMt6Bdj7ZDhtsLW6f7KhxZSrLz8nyqVvvBfm</span>
+                  <button class="btn-copy-address" data-copy-target="sol-address" title="Copiar endereço Solana">
+                    <i data-lucide="copy" class="copy-icon"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

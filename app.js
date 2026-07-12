@@ -672,6 +672,39 @@ function setupEventListeners() {
       }
     });
   });
+
+  // Address Copy Buttons
+  const copyButtons = document.querySelectorAll('.btn-copy-address');
+  copyButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.copyTarget;
+      const textToCopy = document.getElementById(targetId)?.textContent;
+      if (textToCopy) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          btn.classList.add('copied');
+          const icon = btn.querySelector('i');
+          if (icon) {
+            icon.setAttribute('data-lucide', 'check');
+            // Re-render Lucide icons inside this button
+            if (window.lucide) {
+              window.lucide.createIcons();
+            }
+          }
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            if (icon) {
+              icon.setAttribute('data-lucide', 'copy');
+              if (window.lucide) {
+                window.lucide.createIcons();
+              }
+            }
+          }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy text: ', err);
+        });
+      }
+    });
+  });
 }
 
 // Initialize everything on page load
