@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  saas-indicator:
+    build: .
+    container_name: saas_financial_indicator
+    ports:
+      - "9080:80"
+    restart: unless-stopped
