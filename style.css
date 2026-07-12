@@ -1174,20 +1174,12 @@ a {
     grid-template-columns: 1fr;
     gap: 24px;
   }
-}
 
-@media (min-width: 601px) and (max-width: 1024px) {
-  .dashboard-sidebar.active {
-    grid-template-columns: repeat(2, 1fr);
+  /* Exibir botão hamburguer e configurar dropdown */
+  .hamburger-btn {
+    display: flex;
   }
-}
 
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 2.4rem;
-  }
-  
-  /* Hamburger Menu Dropdown on mobile */
   .nav-links {
     display: none !important; /* hidden by default */
     position: absolute;
@@ -1249,6 +1241,18 @@ a {
   
   .tab-text {
     font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .dashboard-sidebar.active {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.4rem;
   }
 
   .main-tabs-content {
