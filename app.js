@@ -247,19 +247,32 @@ async function refreshDashboard() {
     // Plotar médias se marcadas no checkbox
     updateIndicatorVisibility(ema9, ema21, ema52, sma100, sma200);
 
-    // Mapear dados do RSI e Stochastic RSI
+    // Mapear dados do RSI e Stochastic RSI de forma alinhada com pontos em branco (whitespace)
     const rsiData = [];
     const stochKData = [];
     const stochDData = [];
     for (let i = 0; i < candles.length; i++) {
-      if (!isNaN(stochRsi.rsi[i])) {
-        rsiData.push({ time: candles[i].time, value: stochRsi.rsi[i] });
+      const timeVal = candles[i].time;
+      
+      // RSI
+      if (!isNaN(stochRsi.rsi[i]) && stochRsi.rsi[i] !== null) {
+        rsiData.push({ time: timeVal, value: stochRsi.rsi[i] });
+      } else {
+        rsiData.push({ time: timeVal });
       }
-      if (!isNaN(stochRsi.k[i])) {
-        stochKData.push({ time: candles[i].time, value: stochRsi.k[i] });
+      
+      // %K
+      if (!isNaN(stochRsi.k[i]) && stochRsi.k[i] !== null) {
+        stochKData.push({ time: timeVal, value: stochRsi.k[i] });
+      } else {
+        stochKData.push({ time: timeVal });
       }
-      if (!isNaN(stochRsi.d[i])) {
-        stochDData.push({ time: candles[i].time, value: stochRsi.d[i] });
+      
+      // %D
+      if (!isNaN(stochRsi.d[i]) && stochRsi.d[i] !== null) {
+        stochDData.push({ time: timeVal, value: stochRsi.d[i] });
+      } else {
+        stochDData.push({ time: timeVal });
       }
     }
     rsiSeries.setData(rsiData);
