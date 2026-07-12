@@ -121,6 +121,9 @@ function initCharts() {
     borderVisible: false,
     wickUpColor: '#10b981',
     wickDownColor: '#ef4444',
+    priceLineColor: '#f59e0b', // Laranja para o preço atual
+    priceLineVisible: true,
+    lastValueVisible: true,
   });
 
   // Linhas das médias móveis
