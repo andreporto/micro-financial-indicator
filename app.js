@@ -15,6 +15,7 @@ let currentTimeframe = '1w';
 
 // Referências de Gráficos e Séries
 let priceChart = null;
+let rsiChart = null;
 let stochChart = null;
 let candlestickSeries = null;
 let ema9Series = null;
@@ -22,6 +23,7 @@ let ema21Series = null;
 let ema52Series = null;
 let sma100Series = null;
 let sma200Series = null;
+let rsiSeries = null;
 let stochKSeries = null;
 let stochDSeries = null;
 let activePriceLines = [];
@@ -66,12 +68,14 @@ function getSimulatedOnChainData(asset, price) {
  */
 function initCharts() {
   const priceContainer = document.getElementById('price-chart-container');
+  const rsiContainer = document.getElementById('rsi-chart-container');
   const stochContainer = document.getElementById('stoch-chart-container');
 
-  if (!priceContainer || !stochContainer) return;
+  if (!priceContainer || !rsiContainer || !stochContainer) return;
 
   // Limpar containers caso já existam gráficos
   priceContainer.innerHTML = '';
+  rsiContainer.innerHTML = '';
   stochContainer.innerHTML = '';
 
   const chartOptions = {
@@ -121,7 +125,18 @@ function initCharts() {
   sma100Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.sma100, lineWidth: 2, crosshairMarkerVisible: false, lastValueVisible: false });
   sma200Series = priceChart.addSeries(LightweightCharts.LineSeries, { color: COLORS.sma200, lineWidth: 2.5, crosshairMarkerVisible: false, lastValueVisible: false });
 
-  // 2. Criar Gráfico Secundário (Stochastic RSI)
+  // 2. Criar Gráfico de RSI
+  rsiChart = LightweightCharts.createChart(rsiContainer, {
+    ...chartOptions,
+    width: rsiContainer.clientWidth,
+    height: rsiContainer.clientHeight,
+  });
+
+  rsiSeries = rsiChart.addSeries(LightweightCharts.LineSeries, { color: '#8b5cf6', lineWidth: 1.5, title: 'RSI' });
+  rsiSeries.createPriceLine({ price: 30, color: 'rgba(148, 163, 184, 0.3)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true });
+  rsiSeries.createPriceLine({ price: 70, color: 'rgba(148, 163, 184, 0.3)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true });
+
+  // 3. Criar Gráfico Secundário (Stochastic RSI)
   stochChart = LightweightCharts.createChart(stochContainer, {
     ...chartOptions,
     width: stochContainer.clientWidth,
@@ -135,26 +150,28 @@ function initCharts() {
   stochKSeries.createPriceLine({ price: 20, color: 'rgba(148, 163, 184, 0.3)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true });
   stochKSeries.createPriceLine({ price: 80, color: 'rgba(148, 163, 184, 0.3)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true });
 
-  // Sincronizar escalas de tempo dos dois gráficos
+  // Sincronizar escalas de tempo dos três gráficos de forma bidirecional
   let isReflecting = false;
-  priceChart.timeScale().subscribeVisibleTimeRangeChange((timeRange) => {
-    if (isReflecting) return;
-    isReflecting = true;
-    stochChart.timeScale().setVisibleRange(timeRange);
-    isReflecting = false;
-  });
+  const syncCharts = (sourceChart, targets) => {
+    sourceChart.timeScale().subscribeVisibleTimeRangeChange((timeRange) => {
+      if (isReflecting) return;
+      isReflecting = true;
+      targets.forEach(target => {
+        if (timeRange) target.timeScale().setVisibleRange(timeRange);
+      });
+      isReflecting = false;
+    });
+  };
 
-  stochChart.timeScale().subscribeVisibleTimeRangeChange((timeRange) => {
-    if (isReflecting) return;
-    isReflecting = true;
-    priceChart.timeScale().setVisibleRange(timeRange);
-    isReflecting = false;
-  });
+  syncCharts(priceChart, [rsiChart, stochChart]);
+  syncCharts(rsiChart, [priceChart, stochChart]);
+  syncCharts(stochChart, [priceChart, rsiChart]);
 
   // Ajustar responsividade
   const resizeObserver = new ResizeObserver(() => {
-    if (priceChart && stochChart) {
+    if (priceChart && rsiChart && stochChart) {
       priceChart.resize(priceContainer.clientWidth, priceContainer.clientHeight);
+      rsiChart.resize(rsiContainer.clientWidth, rsiContainer.clientHeight);
       stochChart.resize(stochContainer.clientWidth, stochContainer.clientHeight);
     }
   });
@@ -181,12 +198,16 @@ async function refreshDashboard() {
 
     // Forçar redimensionamento baseado no tamanho do container real para evitar largura 0px
     const priceContainer = document.getElementById('price-chart-container');
+    const rsiContainer = document.getElementById('rsi-chart-container');
     const stochContainer = document.getElementById('stoch-chart-container');
     if (priceChart && priceContainer) {
-      priceChart.resize(priceContainer.clientWidth || 800, priceContainer.clientHeight || 420);
+      priceChart.resize(priceContainer.clientWidth || 800, priceContainer.clientHeight || 340);
+    }
+    if (rsiChart && rsiContainer) {
+      rsiChart.resize(rsiContainer.clientWidth || 800, rsiContainer.clientHeight || 150);
     }
     if (stochChart && stochContainer) {
-      stochChart.resize(stochContainer.clientWidth || 800, stochContainer.clientHeight || 180);
+      stochChart.resize(stochContainer.clientWidth || 800, stochContainer.clientHeight || 150);
     }
 
     const closes = candles.map(c => c.close);
@@ -219,10 +240,14 @@ async function refreshDashboard() {
     // Plotar médias se marcadas no checkbox
     updateIndicatorVisibility(ema9, ema21, ema52, sma100, sma200);
 
-    // Mapear dados do Stochastic RSI
+    // Mapear dados do RSI e Stochastic RSI
+    const rsiData = [];
     const stochKData = [];
     const stochDData = [];
     for (let i = 0; i < candles.length; i++) {
+      if (!isNaN(stochRsi.rsi[i])) {
+        rsiData.push({ time: candles[i].time, value: stochRsi.rsi[i] });
+      }
       if (!isNaN(stochRsi.k[i])) {
         stochKData.push({ time: candles[i].time, value: stochRsi.k[i] });
       }
@@ -230,6 +255,7 @@ async function refreshDashboard() {
         stochDData.push({ time: candles[i].time, value: stochRsi.d[i] });
       }
     }
+    rsiSeries.setData(rsiData);
     stochKSeries.setData(stochKData);
     stochDSeries.setData(stochDData);
 
@@ -568,12 +594,16 @@ function setupEventListeners() {
       if (targetTab === 'dashboard') {
         setTimeout(() => {
           const priceContainer = document.getElementById('price-chart-container');
+          const rsiContainer = document.getElementById('rsi-chart-container');
           const stochContainer = document.getElementById('stoch-chart-container');
           if (priceChart && priceContainer) {
-            priceChart.resize(priceContainer.clientWidth || 800, priceContainer.clientHeight || 420);
+            priceChart.resize(priceContainer.clientWidth || 800, priceContainer.clientHeight || 340);
+          }
+          if (rsiChart && rsiContainer) {
+            rsiChart.resize(rsiContainer.clientWidth || 800, rsiContainer.clientHeight || 150);
           }
           if (stochChart && stochContainer) {
-            stochChart.resize(stochContainer.clientWidth || 800, stochContainer.clientHeight || 180);
+            stochChart.resize(stochContainer.clientWidth || 800, stochContainer.clientHeight || 150);
           }
         }, 50);
       }
