@@ -265,30 +265,33 @@ async function refreshDashboard() {
     activePriceLines.forEach(line => candlestickSeries.removePriceLine(line));
     activePriceLines = [];
 
-    // Adicionar Suportes (verde) e Resistências (vermelho) mais próximos
-    srLevels.supports.forEach(level => {
-      const line = candlestickSeries.createPriceLine({
-        price: level,
-        color: 'rgba(16, 185, 129, 0.35)',
-        lineWidth: 1,
-        lineStyle: LightweightCharts.LineStyle.Dotted,
-        axisLabelVisible: true,
-        title: '',
+    const showSR = document.getElementById('toggle-sr').checked;
+    if (showSR) {
+      // Adicionar Suportes (verde) e Resistências (vermelho) mais próximos
+      srLevels.supports.forEach(level => {
+        const line = candlestickSeries.createPriceLine({
+          price: level,
+          color: 'rgba(16, 185, 129, 0.35)',
+          lineWidth: 1,
+          lineStyle: LightweightCharts.LineStyle.Dotted,
+          axisLabelVisible: true,
+          title: '',
+        });
+        activePriceLines.push(line);
       });
-      activePriceLines.push(line);
-    });
 
-    srLevels.resistances.forEach(level => {
-      const line = candlestickSeries.createPriceLine({
-        price: level,
-        color: 'rgba(239, 68, 68, 0.35)',
-        lineWidth: 1,
-        lineStyle: LightweightCharts.LineStyle.Dotted,
-        axisLabelVisible: true,
-        title: '',
+      srLevels.resistances.forEach(level => {
+        const line = candlestickSeries.createPriceLine({
+          price: level,
+          color: 'rgba(239, 68, 68, 0.35)',
+          lineWidth: 1,
+          lineStyle: LightweightCharts.LineStyle.Dotted,
+          axisLabelVisible: true,
+          title: '',
+        });
+        activePriceLines.push(line);
       });
-      activePriceLines.push(line);
-    });
+    }
 
     // 5. Coleta e atualização de dados On-Chain
     const onchain = getSimulatedOnChainData(currentAsset, currentPrice);
@@ -563,6 +566,14 @@ function setupEventListeners() {
       });
     });
   });
+
+  // Checkbox de visibilidade de S/R
+  const toggleSR = document.getElementById('toggle-sr');
+  if (toggleSR) {
+    toggleSR.addEventListener('change', () => {
+      refreshDashboard();
+    });
+  }
 
   // Tabs da Documentação Geral
   const tabButtons = document.querySelectorAll('#docs-tabs .tab-btn');
