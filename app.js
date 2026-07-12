@@ -150,14 +150,16 @@ function initCharts() {
   stochKSeries.createPriceLine({ price: 20, color: 'rgba(148, 163, 184, 0.3)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true });
   stochKSeries.createPriceLine({ price: 80, color: 'rgba(148, 163, 184, 0.3)', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true });
 
-  // Sincronizar escalas de tempo dos três gráficos de forma bidirecional
+  // Sincronizar escalas de tempo dos três gráficos de forma bidirecional (Zoom & Scroll)
   let isReflecting = false;
   const syncCharts = (sourceChart, targets) => {
-    sourceChart.timeScale().subscribeVisibleTimeRangeChange((timeRange) => {
+    sourceChart.timeScale().subscribeVisibleLogicalRangeChange((logicalRange) => {
       if (isReflecting) return;
       isReflecting = true;
       targets.forEach(target => {
-        if (timeRange) target.timeScale().setVisibleRange(timeRange);
+        if (logicalRange !== null) {
+          target.timeScale().setVisibleLogicalRange(logicalRange);
+        }
       });
       isReflecting = false;
     });
