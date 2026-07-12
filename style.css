@@ -1791,3 +1791,99 @@ a {
     font-size: 0.88rem;
   }
 }
+
+/* 5. Forçar exibição em Modo Paisagem (Landscape) para smartphones em orientação retrato */
+#rotate-device-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) and (orientation: portrait) {
+  #rotate-device-overlay {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(8, 13, 25, 0.98);
+    backdrop-filter: blur(12px);
+    z-index: 10000; /* Garante que fique no topo absoluto */
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  body {
+    overflow: hidden !important; /* Desabilita rolagem do body */
+  }
+
+  .rotate-overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 320px;
+    text-align: center;
+  }
+
+  .phone-rotate-animation {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .overlay-icon-phone {
+    width: 44px;
+    height: 44px;
+    color: var(--primary-light);
+    stroke-width: 1.8;
+    animation: rotatePhone 2.5s ease-in-out infinite;
+  }
+
+  .overlay-icon-arrow {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    color: var(--amber-warning);
+    stroke-width: 2.2;
+    opacity: 0.75;
+    animation: pulseArrow 1.5s ease-in-out infinite;
+  }
+
+  .rotate-overlay-content h3 {
+    font-size: 1.35rem;
+    font-family: var(--font-family-title);
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+
+  .rotate-overlay-content p {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+}
+
+@keyframes rotatePhone {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  40%, 60% {
+    transform: rotate(90deg);
+  }
+}
+
+@keyframes pulseArrow {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}

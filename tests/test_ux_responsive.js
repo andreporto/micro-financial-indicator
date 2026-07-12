@@ -36,6 +36,8 @@ assert(htmlContent.includes('collapsible-disclaimer'), 'index.html contains coll
 assert(htmlContent.includes('onclick="toggleDisclaimer(this)"'), 'disclaimer headers contain onclick trigger to toggleDisclaimer');
 assert(htmlContent.includes('logo-hide-mobile'), 'logo has mobile hide class');
 assert(htmlContent.includes('badge-hide-mobile'), 'badge has mobile hide class');
+assert(htmlContent.includes('id="rotate-device-overlay"'), 'index.html contains rotate-device-overlay element');
+assert(htmlContent.includes('data-lucide="smartphone"'), 'rotate-device-overlay contains smartphone icon');
 
 // Verify JavaScript handlers
 assert(htmlContent.includes("window.toggleDisclaimer = function"), 'index.html script defines window.toggleDisclaimer function');
@@ -61,6 +63,8 @@ assert(cssContent.includes('.collapsible-disclaimer'), 'style.css defines stylin
 assert(cssContent.includes('.docs-table'), 'style.css defines responsive rules for .docs-table');
 assert(cssContent.includes('#scoring-table tr'), 'style.css defines mobile layouts for SCM prediction scoring rows');
 assert(cssContent.includes('.logo-hide-mobile'), 'style.css contains logo hiding rules');
+assert(cssContent.includes('#rotate-device-overlay'), 'style.css defines styling for #rotate-device-overlay');
+assert(cssContent.includes('orientation: portrait'), 'style.css uses portrait orientation check to trigger warnings');
 
 // 3. Validate app.js integrations
 if (!fs.existsSync(jsPath)) {
