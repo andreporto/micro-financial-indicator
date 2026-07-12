@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SaaS Financial Indicator - Dashboard & Documentação</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- TradingView Lightweight Charts CDN -->
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <i data-lucide="trending-up" class="logo-icon"></i>
+        <span>Antigravity<span class="logo-accent">SaaS</span></span>
+      </div>
+      <div class="nav-links">
+        <a href="#hero">Início</a>
+        <a href="#dashboard">Dashboard Ao Vivo</a>
+        <a href="#docs">Documentação do Sistema</a>
+        <a href="#estrategia">Tese de Predição</a>
+      </div>
+      <div class="nav-actions">
+        <span class="badge badge-success">API Connect: Online</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header id="hero" class="hero">
+    <div class="hero-content">
+      <div class="tagline">
+        <span class="pulse-icon"></span>
+        <span>Métricas de Alta Periodicidade & Dados On-Chain</span>
+      </div>
+      <h1>Decisões macro de trading baseadas em confluência matemática</h1>
+      <p class="hero-desc">
+        Monitore BTC, ETH e SOL em tempos gráficos institucionais (3d, 1w, 2w, 1M). Filtre o ruído do dia a dia combinando indicadores técnicos avançados com a real saúde on-chain da rede.
+      </p>
+      <div class="hero-buttons">
+        <a href="#dashboard" class="btn btn-primary">Acessar Dashboard</a>
+        <a href="#docs" class="btn btn-secondary">Ver Documentação</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="preview-card">
+        <div class="preview-header">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="preview-body">
+          <div class="stat-row">
+            <div>
+              <span class="stat-label">BTC Score SCM</span>
+              <span class="stat-val bullish" id="hero-score-val">+70 / 100</span>
+            </div>
+            <div>
+              <span class="stat-label">Viés Macro</span>
+              <span class="stat-val status-bullish" id="hero-bias-val">BULLISH</span>
+            </div>
+          </div>
+          <div class="small-chart-placeholder">
+            <!-- Representação gráfica estilizada -->
+            <div class="sparkline-bar" style="height: 40%"></div>
+            <div class="sparkline-bar" style="height: 55%"></div>
+            <div class="sparkline-bar" style="height: 50%"></div>
+            <div class="sparkline-bar" style="height: 70%"></div>
+            <div class="sparkline-bar" style="height: 85%"></div>
+            <div class="sparkline-bar" style="height: 75%"></div>
+            <div class="sparkline-bar" style="height: 90%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main App/Dashboard Section -->
+  <section id="dashboard" class="dashboard-section">
+    <div class="section-header">
+      <h2>Painel de Análise e Execução</h2>
+      <p>Dados de mercado em tempo real agregados diretamente da Binance API</p>
+    </div>
+
+    <div class="dashboard-container">
+      <!-- Sidebar de Controles -->
+      <aside class="dashboard-sidebar">
+        <!-- Seletor de Ativo -->
+        <div class="control-group">
+          <h3>Criptoativo</h3>
+          <div class="selector-buttons" id="asset-selector">
+            <button class="selector-btn active" data-asset="BTC">BTC / USD</button>
+            <button class="selector-btn" data-asset="ETH">ETH / USD</button>
+            <button class="selector-btn" data-asset="SOL">SOL / USD</button>
+          </div>
+        </div>
+
+        <!-- Seletor de Timeframe -->
+        <div class="control-group">
+          <h3>Timeframe (HTF)</h3>
+          <div class="selector-buttons" id="timeframe-selector">
+            <button class="selector-btn" data-timeframe="3d">3 Dias</button>
+            <button class="selector-btn active" data-timeframe="1w">1 Semana</button>
+            <button class="selector-btn" data-timeframe="2w">2 Semanas</button>
+            <button class="selector-btn" data-timeframe="1M">Mensal</button>
+          </div>
+        </div>
+
+        <!-- Visibilidade de Indicadores -->
+        <div class="control-group">
+          <h3>Médias Móveis</h3>
+          <label class="toggle-container">
+            <input type="checkbox" id="toggle-ema9" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label"><span class="indicator-dot ema9-dot"></span> EMA 9</span>
+          </label>
+          <label class="toggle-container">
+            <input type="checkbox" id="toggle-ema21" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label"><span class="indicator-dot ema21-dot"></span> EMA 21</span>
+          </label>
+          <label class="toggle-container">
+            <input type="checkbox" id="toggle-ema52" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label"><span class="indicator-dot ema52-dot"></span> EMA 52</span>
+          </label>
+          <label class="toggle-container">
+            <input type="checkbox" id="toggle-sma100" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label"><span class="indicator-dot sma100-dot"></span> SMA 100</span>
+          </label>
+          <label class="toggle-container">
+            <input type="checkbox" id="toggle-sma200" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label"><span class="indicator-dot sma200-dot"></span> SMA 200</span>
+          </label>
+        </div>
+
+        <!-- Detalhes Rápidos de On-Chain -->
+        <div class="control-group">
+          <h3>Status On-Chain</h3>
+          <div class="onchain-quick-status">
+            <div class="onchain-item">
+              <span class="label">MVRV Z-Score:</span>
+              <span class="val text-blue" id="sidebar-mvrv-val">1.25 (Neutro)</span>
+            </div>
+            <div class="onchain-item">
+              <span class="label">Rainbow Band:</span>
+              <span class="val text-green" id="sidebar-rainbow-val">Acumular</span>
+            </div>
+            <div class="onchain-item">
+              <span class="label">vs STH-RP:</span>
+              <span class="val text-green" id="sidebar-sth-val">+8.4%</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Área do Gráfico Principal -->
+      <main class="chart-area">
+        <div class="chart-header">
+          <div class="asset-info">
+            <h2 id="current-asset-title">Bitcoin (BTC/USD)</h2>
+            <span class="badge" id="current-timeframe-badge">1w</span>
+          </div>
+          <div class="price-info">
+            <span class="current-price" id="current-price-val">$0.00</span>
+            <span class="price-change-percent" id="price-change-val">+0.00%</span>
+          </div>
+        </div>
+
+        <!-- Containers para os gráficos do TradingView -->
+        <div class="charts-wrapper">
+          <div id="price-chart-container" class="chart-container"></div>
+          <div id="stoch-chart-container" class="chart-container-sub"></div>
+        </div>
+
+        <!-- Módulo de Predição de 2 Meses -->
+        <div id="estrategia" class="prediction-module card">
+          <div class="card-header">
+            <h3><i data-lucide="shield-alert" class="card-icon"></i> Relatório de Predição Estratégica (60 Dias)</h3>
+            <span class="badge badge-primary">SCM Engine v1.0</span>
+          </div>
+          <div class="prediction-grid">
+            <div class="score-circle-container">
+              <div class="radial-score">
+                <svg viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" class="bg-circle" />
+                  <circle cx="50" cy="50" r="40" class="score-bar" id="score-progress" stroke-dasharray="251.2" stroke-dashoffset="251.2" />
+                </svg>
+                <div class="radial-text">
+                  <span class="number" id="pred-score-number">0</span>
+                  <span class="label">SCM Score</span>
+                </div>
+              </div>
+              <div class="prediction-bias-badge" id="pred-bias-badge">NEUTRO</div>
+            </div>
+
+            <div class="prediction-thesis">
+              <h4>Tese e Plano de Ação:</h4>
+              <p id="pred-thesis-text">
+                Carregando dados de mercado e processando confluências técnicas e on-chain...
+              </p>
+              <div class="action-points">
+                <div class="action-item">
+                  <span class="action-badge bg-green">COMPRA</span>
+                  <span id="pred-buy-zone">Carregando limites...</span>
+                </div>
+                <div class="action-item">
+                  <span class="action-badge bg-red">ALVO</span>
+                  <span id="pred-target-zone">Carregando alvos...</span>
+                </div>
+                <div class="action-item">
+                  <span class="action-badge bg-gray">STOP</span>
+                  <span id="pred-stop-zone">Carregando invalidação...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scoring-details-table">
+            <h4>Detalhamento dos Fatores de Confluência:</h4>
+            <table class="table" id="scoring-table">
+              <thead>
+                <tr>
+                  <th>Fator Analisado</th>
+                  <th>Pontuação Adicionada/Subtraída</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Inserido dinamicamente via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- System Documentation Section -->
+  <section id="docs" class="docs-section">
+    <div class="section-header">
+      <h2>Documentação Geral do Sistema</h2>
+      <p>Especificação de Engenharia de Software, Algoritmos e Fontes de Dados</p>
+    </div>
+
+    <div class="docs-tabs-container">
+      <div class="docs-tabs-header" id="docs-tabs">
+        <button class="tab-btn active" data-tab="arquitetura">Arquitetura do SaaS</button>
+        <button class="tab-btn" data-tab="divergencias">Detector de Divergências</button>
+        <button class="tab-btn" data-tab="fvg">FVG e Suporte/Resistência</button>
+        <button class="tab-btn" data-tab="onchain">Integração On-Chain</button>
+        <button class="tab-btn" data-tab="predicao">Lógica do Score Ponderado</button>
+      </div>
+
+      <div class="docs-tabs-content">
+        <!-- Tab 1: Arquitetura -->
+        <article class="tab-panel active" id="tab-arquitetura">
+          <h3>Arquitetura de Dados Multicamadas</h3>
+          <p>
+            O SaaS opera em uma estrutura modular que separa a renderização do gráfico, o cálculo estatístico de indicadores e a integração com APIs on-chain de alta latência.
+          </p>
+          <div class="tech-stack-grid">
+            <div class="stack-card">
+              <h4>1. Coleta de Dados</h4>
+              <p>Busca incremental em tempo de execução via APIs CORS habilitadas para a Binance (mercado spot). Suporte a dados diários (1d) para remontar timeframes complexos.</p>
+            </div>
+            <div class="stack-card">
+              <h4>2. Agregação e Processamento</h4>
+              <p>Mecanismos client-side e server-side consolidam as velas diárias em períodos de 3d e 2w, eliminando a dependência de endpoints restritos de exchanges.</p>
+            </div>
+            <div class="stack-card">
+              <h4>3. Motor de Cálculo</h4>
+              <p>Módulos matemáticos dedicados a computar médias móveis rápidas e lentas, osciladores, níveis de fibonacci e limites de desequilíbrio estrutural (FVGs).</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Tab 2: Divergencias -->
+        <article class="tab-panel" id="tab-divergencias">
+          <h3>Detecção de Divergências de Alta Probabilidade</h3>
+          <p>
+            Divergências no **Stochastic RSI** nos tempos gráficos de 3d e 1w fornecem excelentes gatilhos macro para exaustão de tendência.
+          </p>
+          <div class="formula-box">
+            <h4>Lógica de Identificação de Pivôs:</h4>
+            <p>
+              O sistema monitora a ação de preço local e as curvas de momentum. Uma divergência de alta ocorre se o preço cria fundos decrescentes ($Low_2 < Low_1$) enquanto a linha rápida do Stoch RSI (%K) gera fundos ascendentes ($Stoch\_K_2 > Stoch\_K_1$), desde que pelo menos um dos fundos ocorra abaixo do limite de exaustão de venda ($Stoch\_K \le 20$).
+            </p>
+          </div>
+        </article>
+
+        <!-- Tab 3: FVG -->
+        <article class="tab-panel" id="tab-fvg">
+          <h3>Estrutura de Mercado: Fair Value Gaps e Zonas S/R</h3>
+          <p>
+            Fair Value Gaps medem a falta de liquidez no gráfico. O preço tem a tendência histórica de rebalancear essas áreas.
+          </p>
+          <div class="fvg-explanation-row">
+            <div>
+              <h4>Detecção do FVG (Sequência de 3 Velas)</h4>
+              <ul>
+                <li><strong>Bullish FVG:</strong> Mínima da Vela 3 > Máxima da Vela 1. A lacuna é tratada como zona de suporte para compras.</li>
+                <li><strong>Bearish FVG:</strong> Máxima da Vela 3 < Mínima da Vela 1. A lacuna é tratada como zona de resistência para vendas.</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Zonas de Suporte e Resistência por Clustering</h4>
+              <p>
+                Os pivôs de topos e fundos históricos são agrupados usando algoritmos de agrupamento espacial (DBSCAN simplificado ou clustering por distância). Se dois pivôs estão a menos de 2% de distância, são unificados em uma zona de preço relevante.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Tab 4: Onchain -->
+        <article class="tab-panel" id="tab-onchain">
+          <h3>Confluência Fundamental On-Chain</h3>
+          <p>
+            As métricas de rede nos dão a confirmação se o preço está caro ou barato sob uma perspectiva de valor de utilidade e custo médio de mineração/aquisição.
+          </p>
+          <table class="table docs-table">
+            <thead>
+              <tr>
+                <th>Métrica</th>
+                <th>Finalidade na Tomada de Decisão</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>STH Realized Price (STH-RP)</strong></td>
+                <td>Funciona como a média de compra de investidores recentes. Suporte dinâmico durante tendências saudáveis de alta.</td>
+              </tr>
+              <tr>
+                <td><strong>LTH Realized Price (LTH-RP)</strong></td>
+                <td>Média de custo dos "mãos fortes". Marca o nível histórico de capitulação final no mercado de baixa.</td>
+              </tr>
+              <tr>
+                <td><strong>MVRV Z-Score</strong></td>
+                <td>Identifica extremos de mercado em desvios padrão. Z-Score abaixo de 0.2 é oportunidade de compra macro.</td>
+              </tr>
+              <tr>
+                <td><strong>Rainbow Chart</strong></td>
+                <td>Enquadra o preço atual em curvas de crescimento logarítmico de longo prazo para determinar o nível de ganância.</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <!-- Tab 5: Predicao -->
+        <article class="tab-panel" id="tab-predicao">
+          <h3>Score de Confluência Multidimensional (SCM)</h3>
+          <p>
+            O motor de predição atribui pesos numéricos específicos a cada pilar analítico para gerar a tese para os próximos 60 dias.
+          </p>
+          <div class="metrics-weights">
+            <div class="weight-item">
+              <span class="weight-label">Tendência de Preço (Médias Móveis)</span>
+              <span class="weight-val">40% do Score</span>
+            </div>
+            <div class="weight-item">
+              <span class="weight-label">Momentum & Divergências (Stoch RSI / RSI)</span>
+              <span class="weight-val">20% do Score</span>
+            </div>
+            <div class="weight-item">
+              <span class="weight-label">Zonas Estruturais (FVG & Suportes/Resistências)</span>
+              <span class="weight-val">20% do Score</span>
+            </div>
+            <div class="weight-item">
+              <span class="weight-label">Saúde e Custos On-Chain (MVRV & Realized Prices)</span>
+              <span class="weight-val">20% do Score</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <p>&copy; 2026 Antigravity SaaS Financial Indicator. Todos os direitos reservados.</p>
+      <div class="footer-meta">
+        <span>Desenvolvido em conformidade com as diretrizes de UX e Design Contemporâneo.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Script Loader -->
+  <script type="module" src="app.js"></script>
+
+  <script>
+    // Inicializar os ícones do Lucide
+    lucide.createIcons();
+  </script>
+</body>
+</html>
