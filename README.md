@@ -277,7 +277,7 @@ Since the application is structured using native ES6 modules in the browser (`im
 ### Step-by-Step
 1.  Clone this repository to your local machine:
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/andreporto/micro-financial-indicator.git
     cd saas-financial-indicator
     ```
 2.  Start a local server:
@@ -384,7 +384,7 @@ Because it has no database or dedicated backend (it consumes public APIs directl
 3.  **GitHub Pages**:
     *   In your GitHub repository, go to **Settings** > **Pages**.
     *   Select the `main` branch and the root folder (`/`) as the source.
-    *   Save. Your site will be available at `https://your-username.github.io/repository-name/`.
+    *   Save. Your site will be available at `https://andreporto.github.io/micro-financial-indicator/`.
 
 ---
 
@@ -397,12 +397,12 @@ Since the project is static and consumes public APIs directly in the browser, de
 1.  Go to [Vercel](https://vercel.com) and create a free account (Hobby plan).
 2.  In the main dashboard, click **Add New** > **Project**.
 3.  Connect and authorize your **GitHub**, **GitLab**, or **Bitbucket** account.
-4.  Select the `saas-financial-indicator` repository and click **Import**.
+4.  Select the `micro-financial-indicator` repository and click **Import**.
 5.  In the project settings:
     *   **Framework Preset**: Select `Other`.
     *   **Root Directory**: Keep `./` (root folder).
     *   **Build and Development Settings**: Do not change anything (leave blank), since the project uses native HTML, CSS, and JS.
-6.  Click the **Deploy** button. The compilation process will take only a few seconds, and your site will be live with a secure address (e.g., `https://your-project.vercel.app`).
+6.  Click the **Deploy** button. The compilation process will take only a few seconds, and your site will be live with a secure address (e.g., `https://micro-financial-indicator.vercel.app`).
 
 ### Option 2: Via Vercel CLI (Without pushing to Git)
 
