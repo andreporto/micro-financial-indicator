@@ -97,9 +97,14 @@ function initCharts() {
       borderColor: '#202e48',
       timeVisible: true,
       secondsVisible: false,
+      rightOffset: 5,
     },
     rightPriceScale: {
       borderColor: '#202e48',
+      visible: true,
+    },
+    leftPriceScale: {
+      visible: false,
     }
   };
 
@@ -260,6 +265,13 @@ async function refreshDashboard() {
     rsiSeries.setData(rsiData);
     stochKSeries.setData(stochKData);
     stochDSeries.setData(stochDData);
+
+    // Forçar rolagem das escalas de tempo para o canto direito (últimas velas visíveis)
+    setTimeout(() => {
+      if (priceChart) priceChart.timeScale().scrollToPosition(0, false);
+      if (rsiChart) rsiChart.timeScale().scrollToPosition(0, false);
+      if (stochChart) stochChart.timeScale().scrollToPosition(0, false);
+    }, 50);
 
     // 4. Limpar e Plotar Linhas de Suporte/Resistência (S/R)
     activePriceLines.forEach(line => candlestickSeries.removePriceLine(line));
@@ -621,12 +633,15 @@ function setupEventListeners() {
           const stochContainer = document.getElementById('stoch-chart-container');
           if (priceChart && priceContainer) {
             priceChart.resize(priceContainer.clientWidth || 800, priceContainer.clientHeight || 340);
+            priceChart.timeScale().scrollToPosition(0, false);
           }
           if (rsiChart && rsiContainer) {
             rsiChart.resize(rsiContainer.clientWidth || 800, rsiContainer.clientHeight || 150);
+            rsiChart.timeScale().scrollToPosition(0, false);
           }
           if (stochChart && stochContainer) {
             stochChart.resize(stochContainer.clientWidth || 800, stochContainer.clientHeight || 150);
+            stochChart.timeScale().scrollToPosition(0, false);
           }
         }, 50);
       }
