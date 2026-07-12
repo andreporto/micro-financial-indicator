@@ -373,6 +373,9 @@ If you are running the server on a local physical machine (or Raspberry Pi) and 
 ### Option B: Cloud Static Hosting (Highly Recommended)
 Because it has no database or dedicated backend (it consumes public APIs directly from the browser), the project is a perfect candidate for global static hosting platforms (CDNs). It is the fastest and cheapest option (usually free).
 
+> [!IMPORTANT]
+> **For Custom/Private Deployments:** If you are deploying this project for your own private use, you must create your own personal account on the hosting provider (GitHub, Vercel, Netlify, etc.), clone or fork the repository to your own GitHub account, and use your own credentials and deployment domains.
+
 1.  **Vercel (Recommended)**:
     See the detailed step-by-step instructions in the section: [⚡ Free Deployment on Vercel](#-free-deployment-on-vercel).
 2.  **Netlify**:
@@ -391,6 +394,9 @@ Because it has no database or dedicated backend (it consumes public APIs directl
 ## ⚡ Free Deployment on Vercel
 
 Since the project is static and consumes public APIs directly in the browser, deploying to [Vercel](https://vercel.com) is 100% free and takes less than 2 minutes.
+
+> [!NOTE]
+> **Account Setup:** Ensure you use your own Vercel account and select your own cloned repository when importing the project on the Vercel dashboard.
 
 ### Option 1: Via Vercel Dashboard (GitHub/GitLab Integration)
 
