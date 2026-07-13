@@ -650,6 +650,24 @@ function setupEventListeners() {
       const targetPanel = document.getElementById(`panel-${targetTab}`);
       if (targetPanel) targetPanel.classList.add('active');
 
+      // Scroll to top of page for a clean transition on all screens
+      window.scrollTo(0, 0);
+
+      // Close mobile hamburger menu if open
+      const navLinks = document.getElementById('main-tabs');
+      const hamburgerBtn = document.getElementById('hamburger-btn');
+      if (navLinks && navLinks.classList.contains('active')) {
+        navLinks.classList.remove('active');
+        if (hamburgerBtn) {
+          hamburgerBtn.classList.remove('active');
+          const icon = hamburgerBtn.querySelector('i');
+          if (icon) {
+            icon.setAttribute('data-lucide', 'menu');
+            lucide.createIcons();
+          }
+        }
+      }
+
       // If the tab is the dashboard, force resize of the charts to calculate the visible layout
       if (targetTab === 'dashboard') {
         setTimeout(() => {
